@@ -194,18 +194,18 @@ function rows(){
     new:  by((x,y)=>y.start.localeCompare(x.start),(x,y)=>y.copies-x.copies,(x,y)=>nm(x).localeCompare(nm(y))),
     long: by((x,y)=>(y.days||0)-(x.days||0),(x,y)=>y.copies-x.copies,(x,y)=>nm(x).localeCompare(nm(y))),
     spend:by((x,y)=>sp(y)-sp(x),(x,y)=>(y.days||0)-(x.days||0)),
-    copies:by((x,y)=>y.copies-x.copies,(x,y)=>(y.days||0)-(x.days||0),(x,y)=>nm(x).localeCompare(nm(y))),
+    copies:by((x,y)=>(y.nads||1)-(x.nads||1),(x,y)=>y.copies-x.copies,(x,y)=>(y.days||0)-(x.days||0),(x,y)=>nm(x).localeCompare(nm(y))),
     length:by((x,y)=>(y.length||0)-(x.length||0),(x,y)=>nm(x).localeCompare(nm(y))),
     az:   by((x,y)=>nm(x).localeCompare(nm(y)),(x,y)=>y.start.localeCompare(x.start)),
     za:   by((x,y)=>nm(y).localeCompare(nm(x)),(x,y)=>y.start.localeCompare(x.start))};
   return a.sort(S[state.sort]||S.new);
 }
 function kpis(){
-  const a=window.ADS[state.brand], live=a.filter(x=>x.live).length, creators=new Set(a.map(x=>x.creator)).size;
+  const a=window.ADS[state.brand], live=a.filter(x=>x.live).length, creators=new Set(a.map(x=>x.creator)).size, nads=a.reduce((s,x)=>s+(x.nads||1),0);
   const avg=Math.round(a.reduce((s,x)=>s+(x.days||0),0)/a.length);
   $('#title').textContent=`${state.brand} · creator partnership ads`;
   void `Every Meta ad ${state.brand} runs together with a creator ("<creator> with ${state.brand}"), 1 Sep – ${window.UPDATED}. Click a video to play it, or "See details" for the hook, ad copy, variants and transcript.`;
-  $('#kpis').innerHTML=[[a.length,'Partnership ads'],[creators,'Creators'],[live,'Live right now'],[avg+' days','Average time running']]
+  $('#kpis').innerHTML=[[a.length,'Unique creatives'],[nads,'Partnership ads'],[creators,'Creators'],[avg+' days','Average time running']]
     .map(([b,s])=>`<div class="kpi"><b>${b}</b><span>${s}</span></div>`).join('');
 }
 function card(x,i){
@@ -218,8 +218,8 @@ function card(x,i){
     </div>
     <div class="meta">
       <div><div class="status"><span class="dot ${x.live?'':'off'}"></span>${x.days??'?'}d ${x.live?'· live':'· stopped'}</div>
-      <div class="dates">${fmtDate(x.start)} → ${x.live?'now':'ended'}</div></div>
-      ${x.copies>1?`<span class="tag" title="Ads using this creative">×${x.copies}</span>`:''}
+      <div class="dates">${fmtDate(x.first||x.start)} → ${x.live?'now':'ended'}</div></div>
+      ${x.nads>1?`<span class="tag" title="Same video running as ${x.nads} separate ads">Used in ${x.nads} ads</span>`:''}
     </div>
     <div class="who"><div class="av" style="background:${colorFor(x.creator)}">${esc(initials(x.creator))}</div>
       <div style="min-width:0"><b>${esc(x.creator)}</b><small>${x.handle?'@'+esc(x.handle):'Facebook page'} · with ${esc(x.brand)}</small></div></div>
@@ -264,9 +264,9 @@ function tabBody(x){
     <div class="box"><h4>Performance signals</h4>
       ${kv('pulse','Status',x.live?'<span class="livep">● Still running</span>':'Stopped')}
       ${kv('clock','Time running',`${x.days??'?'} days`)}
-      ${kv('cal','Active period',`${fmtDate(x.start)} ${new Date(x.start).getFullYear()} → ${x.live?'Today':'ended'}`)}
+      ${kv('cal','Active period',`${fmtDate(x.first||x.start)} ${new Date(x.first||x.start).getFullYear()} → ${x.live?'Today':'ended'}`)}
       ${kv('coin','Est. spend / day*',money(x.spend)+(x.tier?` · ${esc(x.tier)}`:''))}
-      ${kv('reuse','Ads using this video',x.copies>1?`${x.copies} ads`:'Only this ad')}
+      ${kv('reuse','Running as',x.nads>1?`${x.nads} separate ads`:'1 ad')}
       ${kv('plat','Platforms',x.platforms.map(p=>PLAT[p]||p).join(', '))}
     </div>
     <div class="box"><h4>Creator</h4>
@@ -275,7 +275,7 @@ function tabBody(x){
       ${kv('ext','Profile',x.profile?`<a href="${esc(x.profile)}" target="_blank" rel="noopener">${esc(x.profile.replace(/^https?:\/\/(www\.)?/,''))}</a>`:'—')}
     </div>
     <div class="box"><h4>Creative & links</h4>
-      ${kv('id','Meta Library ID',x.id)}
+      ${kv('id',x.nads>1?'Meta Library IDs':'Meta Library ID',(x.ids||[x.id]).map(i=>`<a href="https://www.facebook.com/ads/library/?id=${i}" target="_blank" rel="noopener">${i}</a>`).join('<br>'))}
       ${kv('fmt','Format',`${x.type==='video'?'Video':'Image'}${x.length?' · '+x.length+'s':''}`)}
       ${kv('reuse','Copy versions',x.variants.length?`${x.variants.length+1} versions`:'1 version')}
       ${kv('lang','Language',x.lang?({en:'English',hi:'Hindi',ta:'Tamil',te:'Telugu',kn:'Kannada',ml:'Malayalam'}[x.lang]||x.lang):'—')}
