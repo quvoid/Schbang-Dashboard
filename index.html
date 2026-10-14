@@ -1,0 +1,331 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Creator Partnership Ads</title>
+<meta name="description" content="Creator partnership ads running on Meta for Palmonas and GIVA, with hooks, ad copy and transcripts.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#ffffff; --ink:#121212; --ink-2:#333333; --muted:#838383; --line:#e8e8e8;
+  --sand:#dfdad5; --sand-2:#f4f1ee; --panel:#ffffff;
+  --orange:#f2552c; --pink:#f0a6d8; --cyan:#45c4dc; --yellow:#f3e33a;
+  --live:#1f9d55; --radius:18px;
+  --grad:linear-gradient(90deg,#a7a39d 0%,#f2552c 30%,#f0a6d8 62%,#f3e33a 100%);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0f0f0f; --ink:#f5f3f0; --ink-2:#d9d6d2; --muted:#9a968f; --line:#2a2a2a;
+    --sand:#3a3632; --sand-2:#1b1a19; --panel:#161616;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0f0f0f; --ink:#f5f3f0; --ink-2:#d9d6d2; --muted:#9a968f; --line:#2a2a2a;
+  --sand:#3a3632; --sand-2:#1b1a19; --panel:#161616;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:Sora,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:inherit}
+.wrap{max-width:1240px;margin:0 auto;padding:0 16px}
+header{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--bg) 92%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.bar{display:flex;align-items:center;gap:16px;height:68px}
+.logo{font-weight:700;font-size:20px;letter-spacing:-.02em}
+.logo span{display:inline-block;width:42px;height:10px;border-radius:6px;background:var(--grad);margin-left:8px;vertical-align:middle}
+.bar .sp{flex:1}
+.pill{border:1px solid var(--line);border-radius:999px;padding:9px 16px;font:500 14px Sora;background:var(--panel);color:var(--ink);cursor:pointer}
+select.pill{appearance:none;padding-right:36px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%23838383' stroke-width='2'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center}
+.btn-dark{background:var(--ink);color:var(--bg);border:0;border-radius:999px;padding:10px 18px;font:600 14px Sora;cursor:pointer;display:inline-flex;gap:8px;align-items:center;text-decoration:none}
+.hero{padding:40px 0 24px}
+.hero h1{font-size:clamp(28px,4.4vw,48px);line-height:1.08;letter-spacing:-.03em;margin:0 0 10px;font-weight:600}
+.hero p{color:var(--muted);margin:0;font-size:15px;max-width:720px}
+.ticker{margin-top:22px;height:6px;border-radius:6px;background:var(--grad)}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:24px 0}
+.kpi{background:var(--sand-2);border-radius:var(--radius);padding:18px 20px}
+.kpi b{display:block;font-size:30px;font-weight:600;letter-spacing:-.02em}
+.kpi span{color:var(--muted);font-size:13px}
+.tools{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:8px 0 22px}
+.search{flex:1;min-width:200px;display:flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:999px;padding:0 16px;background:var(--panel)}
+.search input{border:0;outline:0;background:transparent;color:var(--ink);font:400 14px Sora;padding:11px 0;width:100%}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:999px;padding:3px;background:var(--panel)}
+.seg button{border:0;background:transparent;color:var(--muted);font:500 13px Sora;padding:7px 14px;border-radius:999px;cursor:pointer}
+.seg button.on{background:var(--ink);color:var(--bg)}
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px;padding-bottom:60px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;display:flex;flex-direction:column;position:relative;transition:transform .2s,box-shadow .2s}
+.card:hover{transform:translateY(-3px);box-shadow:0 14px 34px rgba(0,0,0,.08)}
+.rank{position:absolute;top:0;left:18px;background:var(--ink);color:var(--bg);font:600 12px Sora;padding:3px 9px;border-radius:0 0 8px 8px;z-index:2}
+.top{display:flex;justify-content:flex-end;align-items:center;gap:12px;background:var(--sand-2);padding:10px 14px;font-size:12px;color:var(--ink-2);min-height:40px}
+.top .chip{display:inline-flex;align-items:center;gap:5px}
+.meta{display:flex;justify-content:space-between;align-items:flex-start;padding:14px 16px 6px}
+.status{font-size:13px;font-weight:600;display:flex;align-items:center;gap:6px}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--live)}
+.dot.off{background:var(--muted)}
+.dates{color:var(--muted);font-size:12px;margin-top:2px}
+.tag{font-size:12px;font-weight:600;border-radius:8px;padding:4px 8px;background:var(--sand-2)}
+.who{display:flex;gap:10px;align-items:center;padding:6px 16px}
+.av{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;font-weight:700;color:#121212;flex:none}
+.who b{display:block;font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:220px}
+.who small{color:var(--muted);font-size:12px}
+.copy{padding:6px 16px 12px;font-size:13.5px;line-height:1.45;color:var(--ink-2);min-height:62px}
+.copy .clamp{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.copy button{border:0;background:none;color:var(--muted);font:500 13px Sora;padding:0;cursor:pointer}
+.media{margin:0 12px;border-radius:12px;overflow:hidden;background:#000;aspect-ratio:9/14;position:relative}
+.media video,.media img{width:100%;height:100%;object-fit:contain;display:block;background:#000}
+.play{position:absolute;inset:0;display:grid;place-items:center;cursor:pointer;background:linear-gradient(transparent 60%,rgba(0,0,0,.35))}
+.play span{width:60px;height:60px;border-radius:50%;background:rgba(255,255,255,.92);display:grid;place-items:center;box-shadow:0 6px 18px rgba(0,0,0,.3)}
+.len{position:absolute;bottom:10px;right:10px;background:rgba(0,0,0,.7);color:#fff;font-size:11px;padding:3px 7px;border-radius:6px}
+.foot{margin:12px;background:var(--sand-2);border-radius:12px;padding:12px;display:flex;gap:10px;align-items:center}
+.foot .t{flex:1;min-width:0}
+.foot small{color:var(--muted);font-size:11px}
+.foot b{display:block;font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cta{border:1px solid var(--line);background:var(--panel);border-radius:10px;padding:8px 12px;font:600 12px Sora;white-space:nowrap;color:var(--ink);text-decoration:none}
+.actions{display:grid;grid-template-columns:1fr 1.4fr;gap:10px;padding:0 12px 14px}
+.actions a,.actions button{justify-content:center;width:100%}
+.ghost{border:1px solid var(--line);background:var(--panel);border-radius:999px;padding:10px;font:600 14px Sora;color:var(--ink);cursor:pointer;display:inline-flex;gap:8px;align-items:center;text-decoration:none}
+.empty{grid-column:1/-1;text-align:center;color:var(--muted);padding:60px 0}
+/* detail drawer */
+dialog{border:0;padding:0;margin:0 0 0 auto;height:100vh;max-height:100vh;width:min(1180px,100vw);max-width:100vw;background:var(--panel);color:var(--ink);border-radius:22px 0 0 22px;box-shadow:-20px 0 60px rgba(0,0,0,.18)}
+dialog[open]{animation:slide .28s cubic-bezier(.2,.8,.2,1)}
+@keyframes slide{from{transform:translateX(40px);opacity:.4}to{transform:none;opacity:1}}
+dialog::backdrop{background:rgba(10,10,10,.45);backdrop-filter:blur(2px)}
+.dh{display:flex;align-items:center;gap:10px;padding:16px 20px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.ib{width:40px;height:40px;border-radius:12px;border:1px solid var(--line);background:var(--panel);color:var(--ink);display:inline-grid;place-items:center;cursor:pointer;text-decoration:none}
+.ib:disabled{opacity:.35;cursor:default}
+.ctr{font:500 14px ui-monospace,monospace;color:var(--muted);min-width:64px;text-align:center}
+.plat{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:12px;padding:9px 14px;font-size:13px;color:var(--ink-2)}
+.dh .sp{flex:1}
+.db{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,440px);gap:20px;padding:20px;height:calc(100vh - 74px);overflow:hidden}
+.stage{border:1px solid var(--line);border-radius:18px;background:var(--sand-2);position:relative;overflow:auto;display:flex;justify-content:center;align-items:flex-start;padding:56px 16px 24px}
+.zoom{position:absolute;top:12px;right:12px;display:flex;border:1px solid var(--line);border-radius:10px;background:var(--panel);overflow:hidden}
+.zoom button{border:0;background:none;width:32px;height:32px;cursor:pointer;color:var(--ink);font-size:16px}
+.zoom span{font-size:12px;display:grid;place-items:center;padding:0 8px;border-left:1px solid var(--line);border-right:1px solid var(--line)}
+.prev{width:340px;background:var(--panel);border:1px solid var(--line);border-radius:16px;overflow:hidden;transform-origin:top center;transition:transform .15s;flex:none}
+.prev .who{padding:14px 14px 6px}
+.prev .copy{padding:4px 14px 10px;min-height:0}
+.prev .vid{margin:0 10px;border-radius:10px;overflow:hidden;background:#000}
+.prev .vid video,.prev .vid img{width:100%;display:block;max-height:560px;object-fit:contain;background:#000}
+.side{overflow:auto;padding-right:4px}
+.tabs{display:flex;gap:18px;overflow-x:auto;scrollbar-width:none;border-bottom:1px solid var(--line);margin-bottom:16px;position:sticky;top:0;background:var(--panel);z-index:1}
+.tabs button{border:0;background:none;padding:10px 0 12px;font:500 13.5px Sora;white-space:nowrap;flex:none;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent}
+.tabs button.on{color:var(--ink);border-color:var(--ink);font-weight:600}
+.box{background:var(--sand-2);border-radius:14px;padding:14px 16px;margin-bottom:14px}
+.box h4{margin:0 0 8px;font-size:14px;font-weight:600}
+.kv{display:flex;justify-content:space-between;gap:14px;padding:9px 0;font-size:13.5px;border-bottom:1px solid color-mix(in srgb,var(--line) 70%,transparent)}
+.kv:last-child{border-bottom:0}
+.kv span{color:var(--muted);display:flex;gap:8px;align-items:center;white-space:nowrap}
+.kv b{font-weight:600;text-align:right;min-width:0;overflow:hidden;text-overflow:ellipsis}
+.kv a{color:#2563eb;text-decoration:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:240px;display:inline-block;vertical-align:bottom}
+.livep{color:var(--live)}
+.tp{font-size:14px;line-height:1.6;color:var(--ink-2);white-space:pre-wrap;margin:0}
+.sec{margin:0 0 14px}
+.sec h3{font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin:0 0 6px;font-weight:600}
+.sec p{margin:0;font-size:14px;line-height:1.55;color:var(--ink-2);white-space:pre-wrap}
+.hl{border-left:4px solid var(--orange);padding-left:12px}
+.var{background:var(--sand-2);border-radius:12px;padding:12px 14px;margin-bottom:10px;font-size:13.5px;line-height:1.5}
+.toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:999px;font-size:13px;z-index:99;opacity:0;transition:opacity .2s}
+.toast.on{opacity:1}
+@media (max-width:900px){dialog{border-radius:0;width:100vw}.db{grid-template-columns:1fr;height:auto;overflow:visible}dialog{overflow:auto}.stage{padding-top:52px}.prev{width:min(340px,100%)}}
+@media (max-width:1024px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.kpis{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:620px){.grid{grid-template-columns:1fr}.bar{height:auto;padding:12px 0;flex-wrap:wrap}.hide-sm{display:none}}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap bar">
+    <div class="logo">Creator Ads <span></span></div>
+    <div class="sp"></div>
+    <label class="hide-sm" for="brand" style="color:var(--muted);font-size:13px">Brand</label>
+    <select id="brand" class="pill" aria-label="Brand"></select>
+    <button id="theme" class="pill" aria-label="Toggle dark mode">◐</button>
+  </div>
+</header>
+<main class="wrap">
+  <section class="hero">
+    <h1 id="title">Creator partnership ads</h1>
+    <p id="sub"></p>
+    <div class="ticker"></div>
+  </section>
+  <section class="kpis" id="kpis"></section>
+  <section class="tools">
+    <div class="search">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--muted)"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+      <input id="q" placeholder="Search creator, hook or ad copy…" aria-label="Search">
+    </div>
+    <div class="seg" id="status"><button data-v="all" class="on">All</button><button data-v="live">Live</button><button data-v="stopped">Stopped</button></div>
+    <select id="sort" class="pill" aria-label="Sort">
+      <option value="new">Newest first</option>
+      <option value="long">Longest running</option>
+      <option value="spend">Highest est. spend</option>
+      <option value="az">Creator A–Z</option>
+      <option value="za">Creator Z–A</option>
+    </select>
+  </section>
+  <section class="grid" id="grid"></section>
+</main>
+
+<dialog id="dlg" aria-label="Ad details"><div id="dlgBody"></div></dialog><div class="toast" id="toast"></div>
+
+<script src="data.js"></script>
+<script>
+const $=s=>document.querySelector(s), esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const COLORS=['#f2552c','#f0a6d8','#45c4dc','#f3e33a','#dfdad5','#c7b8ff'];
+const state={brand:null,q:'',status:'all',sort:'new'};
+try{const t=localStorage.getItem('theme');if(t)document.documentElement.dataset.theme=t;state.brand=localStorage.getItem('brand')}catch(e){}
+const brands=Object.keys(window.ADS);
+if(!brands.includes(state.brand))state.brand=brands[0];
+$('#brand').innerHTML=brands.map(b=>`<option ${b===state.brand?'selected':''}>${esc(b)}</option>`).join('');
+const fmtDate=s=>s?new Date(s+'T00:00:00').toLocaleDateString('en-GB',{day:'numeric',month:'short'}):'';
+const initials=n=>n.replace(/[^A-Za-z0-9 ]/g,'').split(' ').filter(Boolean).slice(0,2).map(w=>w[0]).join('').toUpperCase()||'?';
+const colorFor=n=>COLORS[[...n].reduce((a,c)=>a+c.charCodeAt(0),0)%COLORS.length];
+const host=u=>{try{return new URL(u).hostname.replace('www.','')}catch(e){return ''}};
+const money=v=>v?'₹'+Number(v).toLocaleString('en-IN')+'/day':'—';
+const PLAT={facebook:'Facebook',instagram:'Instagram',messenger:'Messenger',audience_network:'Audience Network',threads:'Threads',whatsapp:'WhatsApp'};
+
+function rows(){
+  let a=[...window.ADS[state.brand]];
+  const q=state.q.toLowerCase();
+  if(q)a=a.filter(x=>[x.creator,x.handle,x.hook,x.copy,x.headline,x.problem].join(' ').toLowerCase().includes(q));
+  if(state.status!=='all')a=a.filter(x=>state.status==='live'?x.live:!x.live);
+  const s={new:(x,y)=>y.start.localeCompare(x.start),long:(x,y)=>(y.days||0)-(x.days||0),spend:(x,y)=>(+y.spend||0)-(+x.spend||0),
+           az:(x,y)=>x.creator.localeCompare(y.creator),za:(x,y)=>y.creator.localeCompare(x.creator)}[state.sort];
+  return a.sort(s);
+}
+function kpis(){
+  const a=window.ADS[state.brand], live=a.filter(x=>x.live).length, creators=new Set(a.map(x=>x.creator)).size;
+  const avg=Math.round(a.reduce((s,x)=>s+(x.days||0),0)/a.length);
+  $('#title').textContent=`${state.brand} · creator partnership ads`;
+  $('#sub').textContent=`Every Meta ad ${state.brand} runs together with a creator ("<creator> with ${state.brand}"), 1 Sep – ${window.UPDATED}. Click a video to play it, or "See details" for the hook, ad copy, variants and transcript.`;
+  $('#kpis').innerHTML=[[a.length,'Partnership ads'],[creators,'Creators'],[live,'Live right now'],[avg+' days','Average time running']]
+    .map(([b,s])=>`<div class="kpi"><b>${b}</b><span>${s}</span></div>`).join('');
+}
+function card(x,i){
+  return `<article class="card">
+    <div class="rank">${i+1}</div>
+    <div class="top">
+      ${x.spend?`<span class="chip" title="AdTrack model estimate, not Meta data">≈ ${money(x.spend)}</span>`:''}
+      ${x.tier?`<span class="chip">${esc(x.tier)} spend</span>`:''}
+      <span class="chip">${x.platforms.length} platforms</span>
+    </div>
+    <div class="meta">
+      <div><div class="status"><span class="dot ${x.live?'':'off'}"></span>${x.days??'?'}d ${x.live?'· live':'· stopped'}</div>
+      <div class="dates">${fmtDate(x.start)} → ${x.live?'now':'ended'}</div></div>
+      ${x.copies>1?`<span class="tag" title="Ads using this creative">×${x.copies}</span>`:''}
+    </div>
+    <div class="who"><div class="av" style="background:${colorFor(x.creator)}">${esc(initials(x.creator))}</div>
+      <div style="min-width:0"><b>${esc(x.creator)}</b><small>${x.handle?'@'+esc(x.handle):'Facebook page'} · with ${esc(x.brand)}</small></div></div>
+    <div class="copy"><div class="clamp">${esc(x.copy||x.hook||'')}</div>${(x.copy||'').length>110?`<button onclick="openD('${x.id}')">See more</button>`:''}</div>
+    <div class="media" data-id="${x.id}">
+      ${x.type==='video'?`<img src="${x.poster}" alt="" loading="lazy"><div class="play" onclick="play(this)"><span><svg width="22" height="22" viewBox="0 0 24 24"><path d="M7 4l13 8-13 8z" fill="#121212"/></svg></span></div>${x.length?`<span class="len">${x.length}s</span>`:''}`
+        :`<img src="${x.media}" alt="" loading="lazy">`}
+    </div>
+    <div class="foot"><div class="t"><small>${esc(host(x.link))}</small><b>${esc(x.headline||x.creator)}</b></div>
+      ${x.link?`<a class="cta" href="${esc(x.link)}" target="_blank" rel="noopener">${esc(x.cta||'Open')}</a>`:''}</div>
+    <div class="actions">
+      <a class="ghost" href="https://www.facebook.com/ads/library/?id=${x.id}" target="_blank" rel="noopener">Ad Library</a>
+      <button class="btn-dark" onclick="openD('${x.id}')">See details <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg></button>
+    </div>
+  </article>`;
+}
+function play(el){
+  const box=el.parentElement, x=find(box.dataset.id);
+  document.querySelectorAll('.media video').forEach(v=>v.pause());
+  box.innerHTML=`<video src="${x.media}" controls autoplay playsinline poster="${x.poster}"></video>`;
+}
+const find=id=>window.ADS[state.brand].find(x=>x.id===id);
+const ic=(d)=>`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${d}</svg>`;
+const ICON={pulse:ic('<path d="M22 12h-4l-3 9L9 3l-3 9H2"/>'),clock:ic('<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>'),cal:ic('<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18"/>'),
+ coin:ic('<circle cx="12" cy="12" r="9"/><path d="M15 9.5c-.5-1-1.6-1.5-3-1.5-1.7 0-3 .9-3 2s1.3 1.7 3 2 3 .9 3 2-1.3 2-3 2c-1.4 0-2.5-.5-3-1.5M12 6v2M12 16v2"/>'),
+ copy:ic('<rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/>'),link:ic('<path d="M10 13a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1"/><path d="M14 11a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1"/>'),
+ dl:ic('<path d="M12 3v12M7 10l5 5 5-5M5 21h14"/>'),id:ic('<path d="M4 7h16M4 12h16M4 17h10"/>'),fmt:ic('<rect x="3" y="6" width="13" height="12" rx="2"/><path d="M16 10l5-3v10l-5-3"/>'),
+ reuse:ic('<path d="M17 2l4 4-4 4"/><path d="M3 11V9a3 3 0 0 1 3-3h15M7 22l-4-4 4-4"/><path d="M21 13v2a3 3 0 0 1-3 3H3"/>'),lang:ic('<path d="M4 5h8M8 3v2M5 9c1 3 4 6 7 7M11 5c-1 4-4 8-7 10"/><path d="M14 21l4-9 4 9M15.5 18h5"/>'),
+ globe:ic('<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 3 2.5 15 0 18M12 3c-2.5 3-2.5 15 0 18"/>'),ext:ic('<path d="M14 4h6v6M20 4l-9 9M19 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h5"/>'),
+ user:ic('<circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 5-6 8-6s6.5 2 8 6"/>'),plat:ic('<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>'),
+ left:ic('<path d="M15 18l-6-6 6-6"/>'),right:ic('<path d="M9 18l6-6-6-6"/>'),x:ic('<path d="M18 6L6 18M6 6l12 12"/>')};
+const kv=(icon,k,v)=>`<div class="kv"><span>${ICON[icon]||''}${k}</span><b>${v}</b></div>`;
+function sec(t,v,cls=''){return v?`<div class="sec ${cls}"><h3>${t}</h3><p>${esc(v)}</p></div>`:''}
+let cur={list:[],i:0,tab:'details',zoom:1};
+function toast(t){const e=$('#toast');e.textContent=t;e.classList.add('on');setTimeout(()=>e.classList.remove('on'),1600)}
+function openD(id){cur.list=rows();cur.i=Math.max(0,cur.list.findIndex(x=>x.id===id));cur.tab='details';cur.zoom=1;document.querySelectorAll('.media video').forEach(v=>v.pause());drawD();if(!$('#dlg').open)$('#dlg').showModal()}
+function step(d){const n=cur.i+d;if(n<0||n>=cur.list.length)return;cur.i=n;drawD()}
+function setTab(t){cur.tab=t;drawD(true)}
+function setZoom(d){cur.zoom=Math.min(1.5,Math.max(.6,+(cur.zoom+d).toFixed(2)));const p=$('.prev');if(p)p.style.transform=`scale(${cur.zoom})`;const z=$('#zv');if(z)z.textContent=Math.round(cur.zoom*100)+'%'}
+function tabBody(x){
+  if(cur.tab==='details')return `
+    <div class="box"><h4>Performance signals</h4>
+      ${kv('pulse','Status',x.live?'<span class="livep">● Still running</span>':'Stopped')}
+      ${kv('clock','Time running',`${x.days??'?'} days`)}
+      ${kv('cal','Active period',`${fmtDate(x.start)} ${new Date(x.start).getFullYear()} → ${x.live?'Today':'ended'}`)}
+      ${kv('coin','Est. spend / day*',money(x.spend)+(x.tier?` · ${esc(x.tier)}`:''))}
+      ${kv('reuse','Ads using this video',x.copies>1?`${x.copies} ads`:'Only this ad')}
+      ${kv('plat','Platforms',x.platforms.map(p=>PLAT[p]||p).join(', '))}
+    </div>
+    <div class="box"><h4>Creator</h4>
+      ${kv('user','Name',esc(x.creator))}
+      ${kv('user','Handle',x.handle?'@'+esc(x.handle):'Facebook page only')}
+      ${kv('ext','Profile',x.profile?`<a href="${esc(x.profile)}" target="_blank" rel="noopener">${esc(x.profile.replace(/^https?:\/\/(www\.)?/,''))}</a>`:'—')}
+    </div>
+    <div class="box"><h4>Creative & links</h4>
+      ${kv('id','Meta Library ID',x.id)}
+      ${kv('fmt','Format',`${x.type==='video'?'Video':'Image'}${x.length?' · '+x.length+'s':''}`)}
+      ${kv('reuse','Copy versions',x.variants.length?`${x.variants.length+1} versions`:'1 version')}
+      ${kv('lang','Language',x.lang?({en:'English',hi:'Hindi',ta:'Tamil',te:'Telugu',kn:'Kannada',ml:'Malayalam'}[x.lang]||x.lang):'—')}
+      ${kv('globe','Landing page',x.link?`<a href="${esc(x.link)}" target="_blank" rel="noopener">${esc(x.link.replace(/^https?:\/\//,''))}</a>`:'—')}
+      ${kv('ext','Original ad',`<a href="https://www.facebook.com/ads/library/?id=${x.id}" target="_blank" rel="noopener">Open in Ad Library</a>`)}
+    </div>
+    <p style="color:var(--muted);font-size:11px">*Model estimate from ad age and duplicates, not Meta data.</p>`;
+  if(cur.tab==='analysis')return sec('Hook (first 3 seconds)',x.hook,'hl')+sec('Problem / occasion',x.problem)+sec('Solution / claim',x.solution)+sec('Offer & CTA',x.offer)+sec('Tone & voice',x.tone)+sec('Visual format',x.visual)+sec('Who appears',x.characters)+sec('Editing & visual devices',x.devices)+sec('On-screen text',x.onscreen)+'<p style="color:var(--muted);font-size:11px">AI-written from the video frames, transcript and caption.</p>';
+  if(cur.tab==='transcript')return x.transcript?`<div class="sec"><h3>Voiceover${x.lang&&x.lang!=='en'?' ('+esc(x.lang)+')':''}</h3><p class="tp">${esc(x.transcript)}</p></div>`:'<p class="tp" style="color:var(--muted)">No speech in this video (music / text only).</p>';
+  return `<div class="sec"><h3>Main copy</h3>${x.headline?`<p><b>${esc(x.headline)}</b></p>`:''}<p>${esc(x.copy)}</p></div>
+    ${x.variants.length?`<div class="sec"><h3>Other copy versions (${x.variants.length})</h3>${x.variants.map(v=>`<div class="var">${v.title?`<b>${esc(v.title)}</b><br>`:''}${esc(v.body)}</div>`).join('')}</div>`:'<p class="tp" style="color:var(--muted)">This ad runs a single copy version.</p>'}
+    ${x.sameCreative.length?`<div class="sec"><h3>Same video in other ads</h3><p>${x.sameCreative.map(i=>`<a href="https://www.facebook.com/ads/library/?id=${i}" target="_blank" rel="noopener">${i}</a>`).join(' · ')}</p></div>`:''}`;
+}
+function drawD(onlyTab){
+  const x=cur.list[cur.i];
+  if(onlyTab&&$('#sideBody')){$('#sideBody').innerHTML=tabBody(x);document.querySelectorAll('.tabs button').forEach(b=>b.classList.toggle('on',b.dataset.t===cur.tab));return}
+  document.querySelectorAll('#dlg video').forEach(v=>v.pause());
+  const T=[['details','Ad details'],['analysis','Creative analysis'],['transcript','Transcript'],['copy','Copy & variants']];
+  $('#dlgBody').innerHTML=`
+  <div class="dh">
+    <button class="ib" onclick="step(-1)" ${cur.i===0?'disabled':''} aria-label="Previous ad">${ICON.left}</button>
+    <span class="ctr">${cur.i+1}/${cur.list.length}</span>
+    <button class="ib" onclick="step(1)" ${cur.i===cur.list.length-1?'disabled':''} aria-label="Next ad">${ICON.right}</button>
+    <span class="plat">${ICON.plat}${x.platforms.slice(0,2).map(p=>PLAT[p]||p).join(' • ')}${x.platforms.length>2?' +'+(x.platforms.length-2):''} &nbsp;•&nbsp; ${x.type==='video'?'Video':'Image'}</span>
+    <button class="ib" onclick="dlg.close()" aria-label="Close">${ICON.x}</button>
+    <span class="sp"></span>
+    <button class="ib" title="Copy ad copy" onclick="navigator.clipboard.writeText(cur.list[cur.i].copy||'').then(()=>toast('Ad copy copied'))">${ICON.copy}</button>
+    <button class="ib" title="Copy Ad Library link" onclick="navigator.clipboard.writeText('https://www.facebook.com/ads/library/?id=${x.id}').then(()=>toast('Link copied'))">${ICON.link}</button>
+    <a class="ib" title="Download ${x.type}" href="${x.media}" download="${esc(x.creator).replace(/\W+/g,'_')}_${x.id}.${x.type==='video'?'mp4':'jpg'}">${ICON.dl}</a>
+    <a class="btn-dark" href="https://www.facebook.com/ads/library/?id=${x.id}" target="_blank" rel="noopener">See in Ad Library ${ICON.ext}</a>
+  </div>
+  <div class="db">
+    <div class="stage">
+      <div class="zoom"><button onclick="setZoom(-.1)" aria-label="Zoom out">−</button><span id="zv">${Math.round(cur.zoom*100)}%</span><button onclick="setZoom(.1)" aria-label="Zoom in">+</button></div>
+      <div class="prev" style="transform:scale(${cur.zoom})">
+        <div class="who"><div class="av" style="background:${colorFor(x.creator)}">${esc(initials(x.creator))}</div>
+          <div style="min-width:0"><b>${esc(x.creator)}</b><small><span class="dot ${x.live?'':'off'}" style="display:inline-block;margin-right:4px"></span>with ${esc(x.brand)} · Sponsored</small></div></div>
+        <div class="copy"><div class="clamp" id="pc">${esc(x.copy)}</div>${(x.copy||'').length>110?`<button onclick="const c=$('#pc');c.classList.toggle('clamp');this.textContent=c.classList.contains('clamp')?'See more':'See less'">See more</button>`:''}</div>
+        <div class="vid">${x.type==='video'?`<video src="${x.media}" controls playsinline poster="${x.poster}"></video>`:`<img src="${x.media}" alt="">`}</div>
+        <div class="foot"><div class="t"><small>${esc(host(x.link))}</small><b>${esc(x.headline||x.creator)}</b></div>${x.link?`<a class="cta" href="${esc(x.link)}" target="_blank" rel="noopener">${esc(x.cta||'Open')}</a>`:''}</div>
+      </div>
+    </div>
+    <div class="side">
+      <div class="tabs" role="tablist">${T.map(([k,l])=>`<button role="tab" data-t="${k}" class="${cur.tab===k?'on':''}" onclick="setTab('${k}')">${l}</button>`).join('')}</div>
+      <div id="sideBody">${tabBody(x)}</div>
+    </div>
+  </div>`;
+}
+document.addEventListener('keydown',e=>{if(!$('#dlg').open)return;if(e.key==='ArrowRight')step(1);if(e.key==='ArrowLeft')step(-1)});
+$('#dlg').addEventListener('close',()=>document.querySelectorAll('#dlg video').forEach(v=>v.pause()));
+$('#dlg').addEventListener('click',e=>{if(e.target.id==='dlg')$('#dlg').close()});
+function render(){kpis();const a=rows();$('#grid').innerHTML=a.length?a.map(card).join(''):'<div class="empty">No ads match.</div>'}
+$('#brand').onchange=e=>{state.brand=e.target.value;try{localStorage.setItem('brand',state.brand)}catch(_){};render()};
+$('#q').oninput=e=>{state.q=e.target.value;render()};
+$('#sort').onchange=e=>{state.sort=e.target.value;render()};
+$('#status').onclick=e=>{const b=e.target.closest('button');if(!b)return;state.status=b.dataset.v;[...$('#status').children].forEach(c=>c.classList.toggle('on',c===b));render()};
+$('#theme').onclick=()=>{const r=document.documentElement,dark=r.dataset.theme?r.dataset.theme==='dark':matchMedia('(prefers-color-scheme: dark)').matches;r.dataset.theme=dark?'light':'dark';try{localStorage.setItem('theme',r.dataset.theme)}catch(_){}};
+render();
+</script>
+</body>
+</html>
