@@ -16,12 +16,6 @@
   --live:#1f9d55; --radius:18px;
   --grad:linear-gradient(90deg,#a7a39d 0%,#f2552c 30%,#f0a6d8 62%,#f3e33a 100%);
 }
-@media (prefers-color-scheme: dark){
-  :root:not([data-theme="light"]){
-    --bg:#0f0f0f; --ink:#f5f3f0; --ink-2:#d9d6d2; --muted:#9a968f; --line:#2a2a2a;
-    --sand:#3a3632; --sand-2:#1b1a19; --panel:#161616;
-  }
-}
 :root[data-theme="dark"]{
   --bg:#0f0f0f; --ink:#f5f3f0; --ink-2:#d9d6d2; --muted:#9a968f; --line:#2a2a2a;
   --sand:#3a3632; --sand-2:#1b1a19; --panel:#161616;
@@ -33,10 +27,25 @@ a{color:inherit}
 header{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--bg) 92%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
 .bar{display:flex;align-items:center;gap:16px;height:68px}
 .logo{font-weight:700;font-size:20px;letter-spacing:-.02em}
-.logo span{display:inline-block;width:42px;height:10px;border-radius:6px;background:var(--grad);margin-left:8px;vertical-align:middle}
+.logo .wm{font-weight:700;letter-spacing:-.04em}.logo .x{font-style:normal;color:var(--muted);font-weight:400;margin:0 8px}.logo span{display:inline-block;width:42px;height:10px;border-radius:6px;background:var(--grad);margin-left:8px;vertical-align:middle}
 .bar .sp{flex:1}
 .pill{border:1px solid var(--line);border-radius:999px;padding:9px 16px;font:500 14px Sora;background:var(--panel);color:var(--ink);cursor:pointer}
 select.pill{appearance:none;padding-right:36px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%23838383' stroke-width='2'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center}
+.dd{position:relative}
+.ddb{display:flex;align-items:center;gap:10px;border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:14px;padding:8px 14px;cursor:pointer;font-family:Sora;min-width:170px;text-align:left;transition:border-color .15s,box-shadow .15s}
+.ddb:hover,.dd.open .ddb{border-color:var(--ink);box-shadow:0 0 0 3px color-mix(in srgb,var(--sand) 70%,transparent)}
+.ddb small{display:block;font-size:10.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;line-height:1.2}
+.ddb b{display:block;font-size:14px;font-weight:600}
+.ddb small,.ddb b{white-space:nowrap}
+.ddb svg{color:var(--muted);transition:transform .2s;flex:none}
+.dd.open .ddb svg{transform:rotate(180deg)}
+.ddm{position:absolute;right:0;top:calc(100% + 8px);min-width:100%;width:max-content;max-width:280px;list-style:none;margin:0;padding:6px;background:var(--panel);border:1px solid var(--line);border-radius:16px;box-shadow:0 18px 40px rgba(0,0,0,.12);z-index:40;opacity:0;transform:translateY(-6px);pointer-events:none;transition:opacity .15s,transform .15s}
+.dd.open .ddm{opacity:1;transform:none;pointer-events:auto}
+.ddm li{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:10px 12px;border-radius:10px;cursor:pointer;font-size:14px}
+.ddm li:hover{background:var(--sand-2)}
+.ddm li[aria-selected="true"]{font-weight:600}
+.ddm li em{display:block;font-style:normal;font-size:12px;color:var(--muted);font-weight:400;margin-top:2px}
+.ddm li i{font-style:normal;color:var(--orange);font-weight:700}
 .btn-dark{background:var(--ink);color:var(--bg);border:0;border-radius:999px;padding:10px 18px;font:600 14px Sora;cursor:pointer;display:inline-flex;gap:8px;align-items:center;text-decoration:none}
 .hero{padding:40px 0 24px}
 .hero h1{font-size:clamp(28px,4.4vw,48px);line-height:1.08;letter-spacing:-.03em;margin:0 0 10px;font-weight:600}
@@ -134,17 +143,15 @@ dialog::backdrop{background:rgba(10,10,10,.45);backdrop-filter:blur(2px)}
 <body>
 <header>
   <div class="wrap bar">
-    <div class="logo">Creator Ads <span></span></div>
+    <div class="logo"><b class="wm">Schbang</b><i class="x">×</i>Creator Ads <span></span></div>
     <div class="sp"></div>
-    <label class="hide-sm" for="brand" style="color:var(--muted);font-size:13px">Brand</label>
-    <select id="brand" class="pill" aria-label="Brand"></select>
+        <div class="dd" id="brandDD"></div>
     <button id="theme" class="pill" aria-label="Toggle dark mode">◐</button>
   </div>
 </header>
 <main class="wrap">
   <section class="hero">
     <h1 id="title">Creator partnership ads</h1>
-    <p id="sub"></p>
     <div class="ticker"></div>
   </section>
   <section class="kpis" id="kpis"></section>
@@ -153,14 +160,7 @@ dialog::backdrop{background:rgba(10,10,10,.45);backdrop-filter:blur(2px)}
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--muted)"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
       <input id="q" placeholder="Search creator, hook or ad copy…" aria-label="Search">
     </div>
-    <div class="seg" id="status"><button data-v="all" class="on">All</button><button data-v="live">Live</button><button data-v="stopped">Stopped</button></div>
-    <select id="sort" class="pill" aria-label="Sort">
-      <option value="new">Newest first</option>
-      <option value="long">Longest running</option>
-      <option value="spend">Highest est. spend</option>
-      <option value="az">Creator A–Z</option>
-      <option value="za">Creator Z–A</option>
-    </select>
+    <div class="dd" id="sortDD"></div>
   </section>
   <section class="grid" id="grid"></section>
 </main>
@@ -175,7 +175,6 @@ const state={brand:null,q:'',status:'all',sort:'new'};
 try{const t=localStorage.getItem('theme');if(t)document.documentElement.dataset.theme=t;state.brand=localStorage.getItem('brand')}catch(e){}
 const brands=Object.keys(window.ADS);
 if(!brands.includes(state.brand))state.brand=brands[0];
-$('#brand').innerHTML=brands.map(b=>`<option ${b===state.brand?'selected':''}>${esc(b)}</option>`).join('');
 const fmtDate=s=>s?new Date(s+'T00:00:00').toLocaleDateString('en-GB',{day:'numeric',month:'short'}):'';
 const initials=n=>n.replace(/[^A-Za-z0-9 ]/g,'').split(' ').filter(Boolean).slice(0,2).map(w=>w[0]).join('').toUpperCase()||'?';
 const colorFor=n=>COLORS[[...n].reduce((a,c)=>a+c.charCodeAt(0),0)%COLORS.length];
@@ -196,7 +195,7 @@ function kpis(){
   const a=window.ADS[state.brand], live=a.filter(x=>x.live).length, creators=new Set(a.map(x=>x.creator)).size;
   const avg=Math.round(a.reduce((s,x)=>s+(x.days||0),0)/a.length);
   $('#title').textContent=`${state.brand} · creator partnership ads`;
-  $('#sub').textContent=`Every Meta ad ${state.brand} runs together with a creator ("<creator> with ${state.brand}"), 1 Sep – ${window.UPDATED}. Click a video to play it, or "See details" for the hook, ad copy, variants and transcript.`;
+  void `Every Meta ad ${state.brand} runs together with a creator ("<creator> with ${state.brand}"), 1 Sep – ${window.UPDATED}. Click a video to play it, or "See details" for the hook, ad copy, variants and transcript.`;
   $('#kpis').innerHTML=[[a.length,'Partnership ads'],[creators,'Creators'],[live,'Live right now'],[avg+' days','Average time running']]
     .map(([b,s])=>`<div class="kpi"><b>${b}</b><span>${s}</span></div>`).join('');
 }
@@ -320,11 +319,20 @@ document.addEventListener('keydown',e=>{if(!$('#dlg').open)return;if(e.key==='Ar
 $('#dlg').addEventListener('close',()=>document.querySelectorAll('#dlg video').forEach(v=>v.pause()));
 $('#dlg').addEventListener('click',e=>{if(e.target.id==='dlg')$('#dlg').close()});
 function render(){kpis();const a=rows();$('#grid').innerHTML=a.length?a.map(card).join(''):'<div class="empty">No ads match.</div>'}
-$('#brand').onchange=e=>{state.brand=e.target.value;try{localStorage.setItem('brand',state.brand)}catch(_){};render()};
 $('#q').oninput=e=>{state.q=e.target.value;render()};
-$('#sort').onchange=e=>{state.sort=e.target.value;render()};
-$('#status').onclick=e=>{const b=e.target.closest('button');if(!b)return;state.status=b.dataset.v;[...$('#status').children].forEach(c=>c.classList.toggle('on',c===b));render()};
-$('#theme').onclick=()=>{const r=document.documentElement,dark=r.dataset.theme?r.dataset.theme==='dark':matchMedia('(prefers-color-scheme: dark)').matches;r.dataset.theme=dark?'light':'dark';try{localStorage.setItem('theme',r.dataset.theme)}catch(_){}};
+const SORTS=[['new','Newest first'],['long','Longest running'],['spend','Highest est. spend'],['az','Creator A–Z'],['za','Creator Z–A']];
+function dropdown(el,label,opts,get,set){
+  const draw=()=>{const cur=opts.find(o=>o[0]===get());el.innerHTML=`<button class="ddb" aria-haspopup="listbox" aria-expanded="false"><span style="flex:1;min-width:0"><small>${label}</small><b>${esc(cur[1])}</b></span><svg width="12" height="8" viewBox="0 0 12 8"><path d="M1 1l5 5 5-5" fill="none" stroke="currentColor" stroke-width="2"/></svg></button>
+    <ul class="ddm" role="listbox">${opts.map(([v,t,sub])=>`<li role="option" data-v="${v}" aria-selected="${v===get()}"><span>${esc(t)}${sub?`<em>${esc(sub)}</em>`:''}</span>${v===get()?'<i>✓</i>':''}</li>`).join('')}</ul>`;
+    el.querySelector('.ddb').onclick=e=>{e.stopPropagation();const open=!el.classList.contains('open');document.querySelectorAll('.dd.open').forEach(d=>d.classList.remove('open'));el.classList.toggle('open',open);el.querySelector('.ddb').setAttribute('aria-expanded',open)};
+    el.querySelectorAll('li').forEach(li=>li.onclick=()=>{set(li.dataset.v);el.classList.remove('open');draw()});};
+  draw();
+}
+document.addEventListener('click',()=>document.querySelectorAll('.dd.open').forEach(d=>d.classList.remove('open')));
+document.addEventListener('keydown',e=>{if(e.key==='Escape')document.querySelectorAll('.dd.open').forEach(d=>d.classList.remove('open'))});
+dropdown($('#brandDD'),'Brand',brands.map(b=>[b,b,`${window.ADS[b].length} partnership ads`]),()=>state.brand,v=>{state.brand=v;try{localStorage.setItem('brand',v)}catch(_){};render()});
+dropdown($('#sortDD'),'Sort',SORTS,()=>state.sort,v=>{state.sort=v;render()});
+$('#theme').onclick=()=>{const r=document.documentElement,dark=r.dataset.theme==='dark';r.dataset.theme=dark?'light':'dark';try{localStorage.setItem('theme',r.dataset.theme)}catch(_){}};
 render();
 </script>
 </body>
