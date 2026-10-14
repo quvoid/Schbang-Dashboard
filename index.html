@@ -187,9 +187,18 @@ function rows(){
   const q=state.q.toLowerCase();
   if(q)a=a.filter(x=>[x.creator,x.handle,x.hook,x.copy,x.headline,x.problem].join(' ').toLowerCase().includes(q));
   if(state.status!=='all')a=a.filter(x=>state.status==='live'?x.live:!x.live);
-  const s={new:(x,y)=>y.start.localeCompare(x.start),long:(x,y)=>(y.days||0)-(x.days||0),spend:(x,y)=>(+y.spend||0)-(+x.spend||0),
-           az:(x,y)=>x.creator.localeCompare(y.creator),za:(x,y)=>y.creator.localeCompare(x.creator)}[state.sort];
-  return a.sort(s);
+  const nm=x=>x.creator.replace(/^[^A-Za-z0-9]+/,'').toLowerCase();
+  const sp=x=>x.spend===''||x.spend==null?-1:+x.spend;
+  const by=(...fs)=>(x,y)=>{for(const f of fs){const r=f(x,y);if(r)return r}return 0};
+  const S={
+    new:  by((x,y)=>y.start.localeCompare(x.start),(x,y)=>y.copies-x.copies,(x,y)=>nm(x).localeCompare(nm(y))),
+    long: by((x,y)=>(y.days||0)-(x.days||0),(x,y)=>y.copies-x.copies,(x,y)=>nm(x).localeCompare(nm(y))),
+    spend:by((x,y)=>sp(y)-sp(x),(x,y)=>(y.days||0)-(x.days||0)),
+    copies:by((x,y)=>y.copies-x.copies,(x,y)=>(y.days||0)-(x.days||0),(x,y)=>nm(x).localeCompare(nm(y))),
+    length:by((x,y)=>(y.length||0)-(x.length||0),(x,y)=>nm(x).localeCompare(nm(y))),
+    az:   by((x,y)=>nm(x).localeCompare(nm(y)),(x,y)=>y.start.localeCompare(x.start)),
+    za:   by((x,y)=>nm(y).localeCompare(nm(x)),(x,y)=>y.start.localeCompare(x.start))};
+  return a.sort(S[state.sort]||S.new);
 }
 function kpis(){
   const a=window.ADS[state.brand], live=a.filter(x=>x.live).length, creators=new Set(a.map(x=>x.creator)).size;
@@ -320,7 +329,9 @@ $('#dlg').addEventListener('close',()=>document.querySelectorAll('#dlg video').f
 $('#dlg').addEventListener('click',e=>{if(e.target.id==='dlg')$('#dlg').close()});
 function render(){kpis();const a=rows();$('#grid').innerHTML=a.length?a.map(card).join(''):'<div class="empty">No ads match.</div>'}
 $('#q').oninput=e=>{state.q=e.target.value;render()};
-const SORTS=[['new','Newest first'],['long','Longest running'],['spend','Highest est. spend'],['az','Creator A–Z'],['za','Creator Z–A']];
+const ALL_SORTS=[['new','Newest first'],['long','Longest running'],['copies','Most ads using the video'],['spend','Highest est. spend'],['length','Longest video'],['az','Creator A–Z'],['za','Creator Z–A']];
+const sortsFor=b=>ALL_SORTS.filter(([k])=>k!=='spend'||window.ADS[b].some(x=>x.spend));
+const drawSort=()=>{if(!sortsFor(state.brand).some(o=>o[0]===state.sort))state.sort='new';dropdown($('#sortDD'),'Sort',sortsFor(state.brand),()=>state.sort,v=>{state.sort=v;render()})};
 function dropdown(el,label,opts,get,set){
   const draw=()=>{const cur=opts.find(o=>o[0]===get());el.innerHTML=`<button class="ddb" aria-haspopup="listbox" aria-expanded="false"><span style="flex:1;min-width:0"><small>${label}</small><b>${esc(cur[1])}</b></span><svg width="12" height="8" viewBox="0 0 12 8"><path d="M1 1l5 5 5-5" fill="none" stroke="currentColor" stroke-width="2"/></svg></button>
     <ul class="ddm" role="listbox">${opts.map(([v,t,sub])=>`<li role="option" data-v="${v}" aria-selected="${v===get()}"><span>${esc(t)}${sub?`<em>${esc(sub)}</em>`:''}</span>${v===get()?'<i>✓</i>':''}</li>`).join('')}</ul>`;
@@ -330,8 +341,8 @@ function dropdown(el,label,opts,get,set){
 }
 document.addEventListener('click',()=>document.querySelectorAll('.dd.open').forEach(d=>d.classList.remove('open')));
 document.addEventListener('keydown',e=>{if(e.key==='Escape')document.querySelectorAll('.dd.open').forEach(d=>d.classList.remove('open'))});
-dropdown($('#brandDD'),'Brand',brands.map(b=>[b,b,`${window.ADS[b].length} partnership ads`]),()=>state.brand,v=>{state.brand=v;try{localStorage.setItem('brand',v)}catch(_){};render()});
-dropdown($('#sortDD'),'Sort',SORTS,()=>state.sort,v=>{state.sort=v;render()});
+dropdown($('#brandDD'),'Brand',brands.map(b=>[b,b,`${window.ADS[b].length} partnership ads`]),()=>state.brand,v=>{state.brand=v;try{localStorage.setItem('brand',v)}catch(_){};drawSort();render()});
+drawSort();
 $('#theme').onclick=()=>{const r=document.documentElement,dark=r.dataset.theme==='dark';r.dataset.theme=dark?'light':'dark';try{localStorage.setItem('theme',r.dataset.theme)}catch(_){}};
 render();
 </script>
