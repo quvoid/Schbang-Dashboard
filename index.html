@@ -56,7 +56,7 @@ select.pill{appearance:none;padding-right:36px;background-image:url("data:image/
 .kpi b{display:block;font-size:30px;font-weight:600;letter-spacing:-.02em}
 .kpi span{color:var(--muted);font-size:13px}
 .insights{margin:0 0 26px}
-.hookbar{scroll-margin-top:84px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:-8px 0 22px}
+#hookbar{display:block}#hookbar>.lbl,#hookbar>.chip-f{margin:0 4px 8px 0}.hookbar{scroll-margin-top:84px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:-8px 0 22px}
 .hookbar .lbl{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600;margin-right:4px}
 .chip-f{border:1px solid var(--line);background:var(--panel);color:var(--ink-2);border-radius:999px;padding:7px 12px;font:500 13px Sora;cursor:pointer;display:inline-flex;gap:7px;align-items:center;transition:all .15s}
 .chip-f:hover{border-color:var(--ink);color:var(--ink)}
@@ -83,6 +83,21 @@ select.pill{appearance:none;padding-right:36px;background-image:url("data:image/
 .take::after{content:"";position:absolute;left:0;right:0;bottom:0;height:5px;background:var(--grad)}
 .take small{display:block;font-size:11px;letter-spacing:.08em;text-transform:uppercase;opacity:.65;margin-bottom:6px;font-weight:600}
 .take p{margin:0;font-size:15.5px;line-height:1.55}
+.coh{margin-top:12px;background:var(--sand-2);border-radius:var(--radius);padding:18px 20px}
+.coh h3{margin:0 0 4px;font-size:13px;font-weight:600;display:flex;gap:8px;align-items:center}
+.coh>p{margin:0 0 12px;color:var(--muted);font-size:12.5px}
+.cohg{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px}
+.cohg div{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:12px 14px;font-size:13px;line-height:1.5;color:var(--ink-2)}
+.cohg b{display:flex;justify-content:space-between;color:var(--ink);font-size:13.5px;margin-bottom:4px}
+.cohg .cb{cursor:pointer;transition:border-color .18s,box-shadow .18s,transform .18s;position:relative}
+.cohg .cb:hover,.cohg .cb:focus-visible{border-color:var(--ink);box-shadow:0 6px 18px rgba(0,0,0,.06);transform:translateY(-2px);outline:none}
+.cohg .cb.on{border-color:var(--ink);box-shadow:0 0 0 3px color-mix(in srgb,var(--sand) 80%,transparent)}
+.cohg .cb.off{cursor:default;opacity:.7}.cohg .cb.off:hover{transform:none;box-shadow:none;border-color:var(--line)}
+.cgo{display:block;margin-top:10px;font-size:12px;font-weight:600;color:var(--ink)}
+.cb:hover .cgo,.cb.on .cgo{color:var(--orange)}.cb.off .cgo{color:var(--muted);font-weight:500}
+.ltheme{margin:0 16px 10px;padding:8px 10px;border-radius:10px;background:var(--sand-2);font-size:12.5px;line-height:1.45;color:var(--ink-2)}
+.ltheme b{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:2px}
+.cohg b em{font-style:normal;font-size:11px;font-weight:600;background:var(--sand-2);border-radius:999px;padding:1px 8px;color:var(--ink-2)}
 .ins{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
 .ic{background:var(--sand-2);border-radius:var(--radius);padding:18px 20px}
 .ic h3{margin:0 0 12px;font-size:13px;font-weight:600;display:flex;align-items:center;gap:8px}
@@ -213,12 +228,12 @@ dialog::backdrop{background:rgba(10,10,10,.45);backdrop-filter:blur(2px)}
 
 <dialog id="dlg" aria-label="Ad details"><div id="dlgBody"></div></dialog><div class="toast" id="toast"></div>
 
-<script src="data.js?v=202610151334"></script>
-<script src="summary.js?v=202610151334"></script>
+<script src="data.js?v=202610151537"></script>
+<script src="summary.js?v=202610151537"></script>
 <script>
 const $=s=>document.querySelector(s), esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const COLORS=['#f2552c','#f0a6d8','#45c4dc','#f3e33a','#dfdad5','#c7b8ff'];
-const state={brand:null,q:'',status:'all',sort:'new',hook:null};
+const state={brand:null,q:'',status:'all',sort:'new',hook:null,lang:null};
 try{const t=localStorage.getItem('theme');if(t)document.documentElement.dataset.theme=t;state.brand=localStorage.getItem('brand')}catch(e){}
 const brands=Object.keys(window.ADS);
 if(!brands.includes(state.brand))state.brand=brands[0];
@@ -235,6 +250,7 @@ function rows(){
   if(q)a=a.filter(x=>[x.creator,x.handle,x.hook,x.copy,x.headline,x.problem].join(' ').toLowerCase().includes(q));
   if(state.status!=='all')a=a.filter(x=>state.status==='live'?x.live:!x.live);
   if(state.hook)a=a.filter(x=>x.hookType===state.hook);
+  if(state.lang)a=a.filter(x=>x.langKey===state.lang);
   const nm=x=>x.creator.replace(/^[^A-Za-z0-9]+/,'').toLowerCase();
   const sp=x=>x.spend===''||x.spend==null?-1:+x.spend;
   const by=(...fs)=>(x,y)=>{for(const f of fs){const r=f(x,y);if(r)return r}return 0};
@@ -272,6 +288,7 @@ function card(x,i){
     <div class="who"><div class="av" style="background:${colorFor(x.creator)}">${esc(initials(x.creator))}</div>
       <div style="min-width:0"><b>${esc(x.creator)}</b><small>${x.handle?'@'+esc(x.handle):'Facebook page'} · with ${esc(x.brand)}</small></div></div>
     <button class="htag" onclick="setHook('${esc(x.hookType)}')" title="Show all ads with this hook" aria-label="Filter by hook">🎣 ${esc(x.hookType)}</button>
+    ${x.langTheme?`<div class="ltheme"><b>🌐 ${esc(x.langName)} · what it says</b>${esc(x.langTheme)}</div>`:''}
     <div class="copy"><div class="clamp">${esc(x.copy||x.hook||'')}</div>${(x.copy||'').length>110?`<button onclick="openD('${x.id}')">See more</button>`:''}</div>
     <div class="media" data-id="${x.id}">
       ${x.type==='video'?`<img src="${x.poster}" alt="" loading="lazy"><div class="play" onclick="play(this)"><span><svg width="22" height="22" viewBox="0 0 24 24"><path d="M7 4l13 8-13 8z" fill="#121212"/></svg></span></div>${x.length?`<span class="len">${x.length}s</span>`:''}`
@@ -327,12 +344,13 @@ function tabBody(x){
       ${kv('id',x.nads>1?'Meta Library IDs':'Meta Library ID',(x.ids||[x.id]).map(i=>`<a href="https://www.facebook.com/ads/library/?id=${i}" target="_blank" rel="noopener">${i}</a>`).join('<br>'))}
       ${kv('fmt','Format',`${x.type==='video'?'Video':'Image'}${x.length?' · '+x.length+'s':''}`)}
       ${kv('reuse','Copy versions',x.variants.length?`${x.variants.length+1} versions`:'1 version')}
-      ${kv('lang','Language',x.lang?({en:'English',hi:'Hindi',ta:'Tamil',te:'Telugu',kn:'Kannada',ml:'Malayalam'}[x.lang]||x.lang):'—')}
+      ${kv('lang','Language',x.langName?esc(x.langName)+' · translated':x.lang?({en:'English',hi:'Hindi',ta:'Tamil',te:'Telugu',kn:'Kannada',ml:'Malayalam'}[x.lang]||x.lang):'—')}
       ${kv('globe','Landing page',x.link?`<a href="${esc(x.link)}" target="_blank" rel="noopener">${esc(x.link.replace(/^https?:\/\//,''))}</a>`:'—')}
       ${kv('ext','Original ad',`<a href="https://www.facebook.com/ads/library/?id=${x.id}" target="_blank" rel="noopener">Open in Ad Library</a>`)}
     </div>
     <p style="color:var(--muted);font-size:11px">*Model estimate from ad age and duplicates, not Meta data.</p>`;
   if(cur.tab==='analysis')return sec('Hook (first 3 seconds)',x.hook,'hl')+sec('Problem / occasion',x.problem)+sec('Solution / claim',x.solution)+sec('Offer & CTA',x.offer)+sec('Tone & voice',x.tone)+sec('Visual format',x.visual)+sec('Who appears',x.characters)+sec('Editing & visual devices',x.devices)+sec('On-screen text',x.onscreen)+'<p style="color:var(--muted);font-size:11px">AI-written from the video frames, transcript and caption.</p>';
+  if(cur.tab==='transcript'&&x.translation)return `${x.langTheme?`<div class="sec"><h3>What it says</h3><p>${esc(x.langTheme)}</p></div>`:''}<div class="sec hl"><h3>English translation (${esc(x.langName)})</h3><p class="tp">${esc(x.translation)}</p></div><div class="sec"><h3>Original (${esc(x.langName)})</h3><p class="tp">${esc(x.original||x.transcript)}</p></div>`;
   if(cur.tab==='transcript')return x.transcript?`<div class="sec"><h3>Voiceover${x.lang&&x.lang!=='en'?' ('+esc(x.lang)+')':''}</h3><p class="tp">${esc(x.transcript)}</p></div>`:'<p class="tp" style="color:var(--muted)">No speech in this video (music / text only).</p>';
   return `<div class="sec"><h3>Main copy</h3>${x.headline?`<p><b>${esc(x.headline)}</b></p>`:''}<p>${esc(x.copy)}</p></div>
     ${x.variants.length?`<div class="sec"><h3>Other copy versions (${x.variants.length})</h3>${x.variants.map(v=>`<div class="var">${v.title?`<b>${esc(v.title)}</b><br>`:''}${esc(v.body)}</div>`).join('')}</div>`:'<p class="tp" style="color:var(--muted)">This ad runs a single copy version.</p>'}
@@ -385,23 +403,30 @@ function bars(pairs,total){return `<div class="bars">${pairs.map(([k,n])=>`<div>
 function insights(){
   const S=(window.SUMMARY||{})[state.brand];if(!S){$('#insights').innerHTML='';return}
   const a=window.ADS[state.brand],cnt=(f)=>{const m={};a.forEach(x=>{const k=f(x);if(k)m[k]=(m[k]||0)+1});return Object.entries(m).sort((p,q)=>q[1]-p[1])};
-  const fm=cnt(x=>fmtGroup(x.visual)).slice(0,4), lg=cnt(x=>x.lang?(LANG[x.lang]||'Other'):'No speech').slice(0,3);
+  const fm=cnt(x=>fmtGroup(x.visual)).slice(0,4), lg=cnt(x=>x.langKey).slice(0,4);
   $('#insights').innerHTML=`<div class="take"><div><small>Key takeaway</small><p>${esc(S.takeaway)}</p></div></div>
   <div class="ins">
     <div class="ic"><h3><i style="background:var(--orange)"></i>Common hooks</h3><ul class="hks">${S.hooks.map(([t,e])=>{const n=a.filter(x=>x.hookType===t).length;return `<li class="hk ${state.hook===t?'on':''}" role="button" tabindex="0" onclick="setHook('${esc(t)}')" onkeydown="if(event.key==='Enter')setHook('${esc(t)}')"><b>${esc(t)}<em>${n} ad${n===1?'':'s'}</em><span class="go">${state.hook===t?'✓':'→'}</span></b><span>${esc(e)}</span></li>`}).join('')}</ul></div>
     <div class="ic"><h3><i style="background:var(--pink)"></i>Problems they solve</h3><ul>${S.problems.map(p=>`<li>${esc(p)}</li>`).join('')}</ul></div>
     <div class="ic"><h3><i style="background:var(--yellow)"></i>Offers & CTAs</h3><ul>${S.offers.map(p=>`<li>${esc(p)}</li>`).join('')}</ul></div>
     <div class="ic"><h3><i style="background:var(--cyan)"></i>Formats & voice</h3>${bars(fm,a.length)}<div class="sub">Language</div>${bars(lg,a.length)}</div>
-  </div>`;
+  </div>${((window.COHORTS||{})[state.brand]||[]).length?`<div class="coh"><h3><i style="width:10px;height:10px;border-radius:50%;background:var(--grad);display:inline-block"></i>Regional languages – what they say</h3><p>Every non-English video was re-transcribed and translated to English. Click a language to see those reels with their translation.</p><div class="cohg">${window.COHORTS[state.brand].map(([l,n,t])=>{const k=a.filter(x=>x.langKey===l).length;return `<div class="cb ${state.lang===l?'on':''} ${k?'':'off'}" ${k?`role="button" tabindex="0" onclick="setLang('${esc(l)}')" onkeydown="if(event.key==='Enter')setLang('${esc(l)}')"`:''}><b>${esc(l)}<em>${n} video${n===1?'':'s'} in all ads</em></b>${esc(t)}<span class="cgo">${k?`${state.lang===l?'✓ Showing':'View'} ${k} partnership reel${k===1?'':'s'} ${state.lang===l?'':'→'}`:'No partnership reels in this language'}</span></div>`}).join('')}</div></div>`:''}`;
 }
 function hookbar(){
   const a=window.ADS[state.brand],m={};a.forEach(x=>m[x.hookType]=(m[x.hookType]||0)+1);
   const list=Object.entries(m).sort((p,q)=>q[1]-p[1]);
   $('#hookbar').innerHTML=`<span class="lbl">Hook</span><button class="chip-f ${!state.hook?'on':''}" onclick="setHook(null)">All <b>${a.length}</b></button>`+
-    list.map(([k,n])=>`<button class="chip-f ${state.hook===k?'on':''}" onclick="setHook('${esc(k)}')">${esc(k)} <b>${n}</b></button>`).join('');
+    list.map(([k,n])=>`<button class="chip-f ${state.hook===k?'on':''}" onclick="setHook('${esc(k)}')">${esc(k)} <b>${n}</b></button>`).join('')+langbar();
 }
+function langbar(){
+  const a=window.ADS[state.brand],m={};a.forEach(x=>m[x.langKey]=(m[x.langKey]||0)+1);
+  const order=Object.entries(m).sort((p,q)=>(p[0]==='English')-(q[0]==='English')||(p[0]==='No speech')-(q[0]==='No speech')||q[1]-p[1]);
+  return `<div class="hookbar" style="margin-top:-12px"><span class="lbl">Language</span><button class="chip-f ${!state.lang?'on':''}" onclick="setLang(null)">All <b>${a.length}</b></button>`+
+    order.map(([k,n])=>`<button class="chip-f ${state.lang===k?'on':''}" onclick="setLang('${esc(k)}')">${esc(k)}${!['English','No speech'].includes(k)?' 🌐':''} <b>${n}</b></button>`).join('')+'</div>';
+}
+function setLang(l){state.lang=(l&&state.lang!==l)?l:null;render();const g=$('#hookbar');if(g&&l)g.scrollIntoView({behavior:'smooth',block:'start'})}
 function setHook(h){state.hook=(h&&state.hook!==h)?h:null;render();const g=$('#hookbar');if(g&&h)g.scrollIntoView({behavior:'smooth',block:'start'})}
-function render(){kpis();insights();hookbar();const a=rows();$('#grid').innerHTML=(state.hook?`<div class="hookline" style="grid-column:1/-1"><span>Showing <b>${a.length}</b> creative${a.length===1?'':'s'} with the hook <b>${esc(state.hook)}</b></span><button onclick="setHook(null)">Clear ✕</button></div>`:'')+(a.length?a.map(card).join(''):'<div class="empty">No ads match.</div>')}
+function render(){kpis();insights();hookbar();const a=rows();const fl=[state.hook&&`hook <b>${esc(state.hook)}</b>`,state.lang&&`language <b>${esc(state.lang)}</b>`].filter(Boolean).join(' and ');$('#grid').innerHTML=(fl?`<div class="hookline" style="grid-column:1/-1"><span>Showing <b>${a.length}</b> creative${a.length===1?'':'s'} with the ${fl}</span><button onclick="state.hook=null;state.lang=null;render()">Clear ✕</button></div>`:'')+(a.length?a.map(card).join(''):'<div class="empty">No ads match.</div>')}
 $('#q').oninput=e=>{state.q=e.target.value;render()};
 const ALL_SORTS=[['new','Newest first'],['long','Longest running'],['copies','Most ads using the video'],['spend','Highest est. spend'],['length','Longest video'],['az','Creator A–Z'],['za','Creator Z–A']];
 const sortsFor=b=>ALL_SORTS.filter(([k])=>k!=='spend'||window.ADS[b].some(x=>x.spend));
@@ -415,7 +440,7 @@ function dropdown(el,label,opts,get,set){
 }
 document.addEventListener('click',()=>document.querySelectorAll('.dd.open').forEach(d=>d.classList.remove('open')));
 document.addEventListener('keydown',e=>{if(e.key==='Escape')document.querySelectorAll('.dd.open').forEach(d=>d.classList.remove('open'))});
-dropdown($('#brandDD'),'Brand',brands.map(b=>[b,b,`${window.ADS[b].length} creatives · ${window.ADS[b].reduce((s,x)=>s+(x.nads||1),0)} ads`]),()=>state.brand,v=>{state.brand=v;state.hook=null;try{localStorage.setItem('brand',v)}catch(_){};drawSort();render()});
+dropdown($('#brandDD'),'Brand',brands.map(b=>[b,b,`${window.ADS[b].length} creatives · ${window.ADS[b].reduce((s,x)=>s+(x.nads||1),0)} ads`]),()=>state.brand,v=>{state.brand=v;state.hook=null;state.lang=null;try{localStorage.setItem('brand',v)}catch(_){};drawSort();render()});
 drawSort();
 $('#theme').onclick=()=>{const r=document.documentElement,dark=r.dataset.theme==='dark';r.dataset.theme=dark?'light':'dark';try{localStorage.setItem('theme',r.dataset.theme)}catch(_){}};
 render();
