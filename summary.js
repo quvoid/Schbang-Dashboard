@@ -5,9 +5,9 @@ window.SUMMARY = {
     takeaway: "Palmonas uses creators as faces for a celebrity-led brand: Shraddha Kapoor anchors the big moments (Karva Chauth, the platinum-plated silver launch, gifting), while creators sell 'everyday luxury' – 9KT and demi-fine gold you wear on a normal day, not just at weddings.",
     hooks: [
       ["Celebrity moment", "Shraddha Kapoor talking to husbands about Karva Chauth gifts; 'Gift karna kitna maza aata hai?'"],
-      ["Everyday-life openers", "'Big plans for today?', 'A slow day', 'I'm kicking off my shoes', 'super hectic social season'"],
-      ["Mini skits", "Sisters fighting over a necklace, 'Excuse me miss, I thought you were someone else', a fake phone call"],
-      ["Silent luxury visuals", "High-gloss gold on dark backgrounds and travel montages (New York, Cape Town) with no speech"]
+      ["Everyday-life moment", "'Big plans for today?', 'A slow day', 'I'm kicking off my shoes', 'super hectic social season'"],
+      ["Skit / role-play", "Sisters fighting over a necklace, 'Excuse me miss, I thought you were someone else', a fake phone call"],
+      ["Travel & aspiration", "Travel montages and city backdrops: 'This city is my new backdrop' (Cape Town), New York streets, 'so am I… in Palmonas!' by the sea"]
     ],
     problems: [
       "Wanting expensive-looking gold that is affordable enough for daily wear",
@@ -25,10 +25,10 @@ window.SUMMARY = {
   "GIVA": {
     takeaway: "GIVA runs its creators as a personal-code machine: almost every creator gets their own 15% code (PREKSHA15, HUG15, STEP15, PAWAR15, ANSHUL15…), and the videos sell a feeling – festive, everyday or self-expression – rather than a product spec.",
     hooks: [
-      ["Festive call-outs", "'Mummy, have you lit those diyas yet?', 'This invite said festive', 'Tyohar Anek, Feeling Ek', Pujo lines in Bengali"],
-      ["Myth-busting questions", "'Why save your best pieces for a day that doesn't exist?', 'Why are anklets only traditional?', 'They say less is more. I disagree.'"],
-      ["Relatable moments", "'5pm hits and suddenly I have places to be', '30 minutes to a plan', 'Move in once a 9-5'"],
-      ["Skits", "Fake 911 'robbery' call, 'Girl dad 101', a 'red flags' couple skit, a Bollywood dialogue opener"]
+      ["Festive call-out", "'Mummy, have you lit those diyas yet?', 'This invite said festive', 'Tyohar Anek, Feeling Ek', Pujo lines in Bengali"],
+      ["Myth-busting question", "'Why save your best pieces for a day that doesn't exist?', 'Why are anklets only traditional?', 'They say less is more. I disagree.'"],
+      ["Everyday-life moment", "'5pm hits and suddenly I have places to be', '30 minutes to a plan', 'Move in once a 9-5'"],
+      ["Skit / role-play", "Fake 911 'robbery' call, 'Girl dad 101', a 'red flags' couple skit, a Bollywood dialogue opener"]
     ],
     problems: [
       "Festive looks and gifting for Navratri, Pujo and Diwali",
@@ -47,9 +47,9 @@ window.SUMMARY = {
     takeaway: "The Amethyst Store turns creators into store guides: most partnership videos are a creator walking into a store (Bengaluru, Hyderabad, Chennai, Coimbatore, Dindigul) and doing a haul, and the strongest hook is the Old Jewellery Exchange Fest – swap old gold or silver from any store for new pieces.",
     hooks: [
       ["Store discovery", "'I just found my new favourite place for jewellery', 'I thought this was just another jewellery store until I walked in'"],
-      ["Wedding panic", "'A last-minute wedding invite', 'my best friend's wedding is coming up', 'one wedding, three outfits'"],
-      ["Old jewellery", "'We all have jewellery sitting at home we'll never wear again', 'Trousseau Files', 'girl mom… sitting in my locker'"],
-      ["Local call-outs", "'Namaskar Bengaluru!', 'Vanakkam', a list of Tamil towns ending in Dindigul"]
+      ["Wedding & function panic", "'A last-minute wedding invite', 'my best friend's wedding is coming up', 'one wedding, three outfits'"],
+      ["Old jewellery / exchange", "'We all have jewellery sitting at home we'll never wear again', 'Trousseau Files', 'girl mom… sitting in my locker'"],
+      ["Local call-out", "'Namaskar Bengaluru!', 'Vanakkam', a list of Tamil towns ending in Dindigul"]
     ],
     problems: [
       "South-Indian weddings and functions – multiple looks, brides, guests",

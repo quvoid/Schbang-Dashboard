@@ -56,6 +56,29 @@ select.pill{appearance:none;padding-right:36px;background-image:url("data:image/
 .kpi b{display:block;font-size:30px;font-weight:600;letter-spacing:-.02em}
 .kpi span{color:var(--muted);font-size:13px}
 .insights{margin:0 0 26px}
+.hookbar{scroll-margin-top:84px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:-8px 0 22px}
+.hookbar .lbl{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600;margin-right:4px}
+.chip-f{border:1px solid var(--line);background:var(--panel);color:var(--ink-2);border-radius:999px;padding:7px 12px;font:500 13px Sora;cursor:pointer;display:inline-flex;gap:7px;align-items:center;transition:all .15s}
+.chip-f:hover{border-color:var(--ink);color:var(--ink)}
+.chip-f b{font-weight:600;font-size:11.5px;color:var(--muted);background:var(--sand-2);border-radius:999px;padding:1px 7px}
+.chip-f.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.chip-f.on b{background:rgba(255,255,255,.18);color:var(--bg)}
+.hookline{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:0 0 18px;padding:12px 16px;border-radius:14px;background:var(--sand-2);font-size:14px}
+.hookline button{border:0;background:var(--ink);color:var(--bg);border-radius:999px;padding:7px 14px;font:600 12.5px Sora;cursor:pointer}
+.ic ul.hks{gap:6px}
+.ic li.hk{cursor:pointer;position:relative;border-radius:12px;padding:10px 12px 10px 14px;border:1px solid transparent;transition:background .18s,border-color .18s,box-shadow .18s,transform .18s;outline:none}
+.ic li.hk::before{content:"";position:absolute;left:0;top:10px;bottom:10px;width:3px;border-radius:3px;background:var(--orange);transform:scaleY(0);transition:transform .18s}
+.ic li.hk:hover,.ic li.hk:focus-visible{background:var(--panel);border-color:var(--line);box-shadow:0 6px 18px rgba(0,0,0,.06);transform:translateX(2px)}
+.ic li.hk:hover::before,.ic li.hk:focus-visible::before,.ic li.hk.on::before{transform:scaleY(1)}
+.ic li.hk.on{background:var(--panel);border-color:var(--ink);box-shadow:0 0 0 3px color-mix(in srgb,var(--sand) 80%,transparent)}
+.ic li.hk b{display:flex;align-items:center;gap:8px;margin-bottom:3px}
+.ic li.hk em{font-style:normal;font-size:11px;font-weight:600;color:var(--ink-2);background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:1px 8px}
+.ic li.hk:hover em,.ic li.hk.on em{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.ic li.hk .go{margin-left:auto;color:var(--muted);font-weight:500;transition:transform .18s,color .18s}
+.ic li.hk:hover .go,.ic li.hk.on .go{transform:translateX(3px);color:var(--orange)}
+.ic li.hk.on .go{transform:none}
+.htag{display:inline-block;margin:0 16px 8px;border:0;background:var(--sand-2);color:var(--ink-2);border-radius:999px;padding:4px 10px;font:500 11.5px Sora;cursor:pointer;align-self:flex-start}
+.htag:hover{background:var(--ink);color:var(--bg)}
 .take{background:var(--ink);color:var(--bg);border-radius:var(--radius);padding:20px 24px;display:flex;gap:16px;align-items:flex-start;margin-bottom:12px;position:relative;overflow:hidden}
 .take::after{content:"";position:absolute;left:0;right:0;bottom:0;height:5px;background:var(--grad)}
 .take small{display:block;font-size:11px;letter-spacing:.08em;text-transform:uppercase;opacity:.65;margin-bottom:6px;font-weight:600}
@@ -184,17 +207,18 @@ dialog::backdrop{background:rgba(10,10,10,.45);backdrop-filter:blur(2px)}
     </div>
     <div class="dd" id="sortDD"></div>
   </section>
+  <section class="hookbar" id="hookbar" aria-label="Filter by hook"></section>
   <section class="grid" id="grid"></section>
 </main>
 
 <dialog id="dlg" aria-label="Ad details"><div id="dlgBody"></div></dialog><div class="toast" id="toast"></div>
 
-<script src="data.js"></script>
-<script src="summary.js"></script>
+<script src="data.js?v=202610151334"></script>
+<script src="summary.js?v=202610151334"></script>
 <script>
 const $=s=>document.querySelector(s), esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const COLORS=['#f2552c','#f0a6d8','#45c4dc','#f3e33a','#dfdad5','#c7b8ff'];
-const state={brand:null,q:'',status:'all',sort:'new'};
+const state={brand:null,q:'',status:'all',sort:'new',hook:null};
 try{const t=localStorage.getItem('theme');if(t)document.documentElement.dataset.theme=t;state.brand=localStorage.getItem('brand')}catch(e){}
 const brands=Object.keys(window.ADS);
 if(!brands.includes(state.brand))state.brand=brands[0];
@@ -210,6 +234,7 @@ function rows(){
   const q=state.q.toLowerCase();
   if(q)a=a.filter(x=>[x.creator,x.handle,x.hook,x.copy,x.headline,x.problem].join(' ').toLowerCase().includes(q));
   if(state.status!=='all')a=a.filter(x=>state.status==='live'?x.live:!x.live);
+  if(state.hook)a=a.filter(x=>x.hookType===state.hook);
   const nm=x=>x.creator.replace(/^[^A-Za-z0-9]+/,'').toLowerCase();
   const sp=x=>x.spend===''||x.spend==null?-1:+x.spend;
   const by=(...fs)=>(x,y)=>{for(const f of fs){const r=f(x,y);if(r)return r}return 0};
@@ -246,6 +271,7 @@ function card(x,i){
     </div>
     <div class="who"><div class="av" style="background:${colorFor(x.creator)}">${esc(initials(x.creator))}</div>
       <div style="min-width:0"><b>${esc(x.creator)}</b><small>${x.handle?'@'+esc(x.handle):'Facebook page'} · with ${esc(x.brand)}</small></div></div>
+    <button class="htag" onclick="setHook('${esc(x.hookType)}')" title="Show all ads with this hook" aria-label="Filter by hook">🎣 ${esc(x.hookType)}</button>
     <div class="copy"><div class="clamp">${esc(x.copy||x.hook||'')}</div>${(x.copy||'').length>110?`<button onclick="openD('${x.id}')">See more</button>`:''}</div>
     <div class="media" data-id="${x.id}">
       ${x.type==='video'?`<img src="${x.poster}" alt="" loading="lazy"><div class="play" onclick="play(this)"><span><svg width="22" height="22" viewBox="0 0 24 24"><path d="M7 4l13 8-13 8z" fill="#121212"/></svg></span></div>${x.length?`<span class="len">${x.length}s</span>`:''}`
@@ -362,13 +388,20 @@ function insights(){
   const fm=cnt(x=>fmtGroup(x.visual)).slice(0,4), lg=cnt(x=>x.lang?(LANG[x.lang]||'Other'):'No speech').slice(0,3);
   $('#insights').innerHTML=`<div class="take"><div><small>Key takeaway</small><p>${esc(S.takeaway)}</p></div></div>
   <div class="ins">
-    <div class="ic"><h3><i style="background:var(--orange)"></i>Common hooks</h3><ul>${S.hooks.map(([t,e])=>`<li><b>${esc(t)}</b><span>${esc(e)}</span></li>`).join('')}</ul></div>
+    <div class="ic"><h3><i style="background:var(--orange)"></i>Common hooks</h3><ul class="hks">${S.hooks.map(([t,e])=>{const n=a.filter(x=>x.hookType===t).length;return `<li class="hk ${state.hook===t?'on':''}" role="button" tabindex="0" onclick="setHook('${esc(t)}')" onkeydown="if(event.key==='Enter')setHook('${esc(t)}')"><b>${esc(t)}<em>${n} ad${n===1?'':'s'}</em><span class="go">${state.hook===t?'✓':'→'}</span></b><span>${esc(e)}</span></li>`}).join('')}</ul></div>
     <div class="ic"><h3><i style="background:var(--pink)"></i>Problems they solve</h3><ul>${S.problems.map(p=>`<li>${esc(p)}</li>`).join('')}</ul></div>
     <div class="ic"><h3><i style="background:var(--yellow)"></i>Offers & CTAs</h3><ul>${S.offers.map(p=>`<li>${esc(p)}</li>`).join('')}</ul></div>
     <div class="ic"><h3><i style="background:var(--cyan)"></i>Formats & voice</h3>${bars(fm,a.length)}<div class="sub">Language</div>${bars(lg,a.length)}</div>
   </div>`;
 }
-function render(){kpis();insights();const a=rows();$('#grid').innerHTML=a.length?a.map(card).join(''):'<div class="empty">No ads match.</div>'}
+function hookbar(){
+  const a=window.ADS[state.brand],m={};a.forEach(x=>m[x.hookType]=(m[x.hookType]||0)+1);
+  const list=Object.entries(m).sort((p,q)=>q[1]-p[1]);
+  $('#hookbar').innerHTML=`<span class="lbl">Hook</span><button class="chip-f ${!state.hook?'on':''}" onclick="setHook(null)">All <b>${a.length}</b></button>`+
+    list.map(([k,n])=>`<button class="chip-f ${state.hook===k?'on':''}" onclick="setHook('${esc(k)}')">${esc(k)} <b>${n}</b></button>`).join('');
+}
+function setHook(h){state.hook=(h&&state.hook!==h)?h:null;render();const g=$('#hookbar');if(g&&h)g.scrollIntoView({behavior:'smooth',block:'start'})}
+function render(){kpis();insights();hookbar();const a=rows();$('#grid').innerHTML=(state.hook?`<div class="hookline" style="grid-column:1/-1"><span>Showing <b>${a.length}</b> creative${a.length===1?'':'s'} with the hook <b>${esc(state.hook)}</b></span><button onclick="setHook(null)">Clear ✕</button></div>`:'')+(a.length?a.map(card).join(''):'<div class="empty">No ads match.</div>')}
 $('#q').oninput=e=>{state.q=e.target.value;render()};
 const ALL_SORTS=[['new','Newest first'],['long','Longest running'],['copies','Most ads using the video'],['spend','Highest est. spend'],['length','Longest video'],['az','Creator A–Z'],['za','Creator Z–A']];
 const sortsFor=b=>ALL_SORTS.filter(([k])=>k!=='spend'||window.ADS[b].some(x=>x.spend));
@@ -382,7 +415,7 @@ function dropdown(el,label,opts,get,set){
 }
 document.addEventListener('click',()=>document.querySelectorAll('.dd.open').forEach(d=>d.classList.remove('open')));
 document.addEventListener('keydown',e=>{if(e.key==='Escape')document.querySelectorAll('.dd.open').forEach(d=>d.classList.remove('open'))});
-dropdown($('#brandDD'),'Brand',brands.map(b=>[b,b,`${window.ADS[b].length} creatives · ${window.ADS[b].reduce((s,x)=>s+(x.nads||1),0)} ads`]),()=>state.brand,v=>{state.brand=v;try{localStorage.setItem('brand',v)}catch(_){};drawSort();render()});
+dropdown($('#brandDD'),'Brand',brands.map(b=>[b,b,`${window.ADS[b].length} creatives · ${window.ADS[b].reduce((s,x)=>s+(x.nads||1),0)} ads`]),()=>state.brand,v=>{state.brand=v;state.hook=null;try{localStorage.setItem('brand',v)}catch(_){};drawSort();render()});
 drawSort();
 $('#theme').onclick=()=>{const r=document.documentElement,dark=r.dataset.theme==='dark';r.dataset.theme=dark?'light':'dark';try{localStorage.setItem('theme',r.dataset.theme)}catch(_){}};
 render();
