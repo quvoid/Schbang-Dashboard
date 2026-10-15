@@ -55,6 +55,27 @@ select.pill{appearance:none;padding-right:36px;background-image:url("data:image/
 .kpi{background:var(--sand-2);border-radius:var(--radius);padding:18px 20px}
 .kpi b{display:block;font-size:30px;font-weight:600;letter-spacing:-.02em}
 .kpi span{color:var(--muted);font-size:13px}
+.insights{margin:0 0 26px}
+.take{background:var(--ink);color:var(--bg);border-radius:var(--radius);padding:20px 24px;display:flex;gap:16px;align-items:flex-start;margin-bottom:12px;position:relative;overflow:hidden}
+.take::after{content:"";position:absolute;left:0;right:0;bottom:0;height:5px;background:var(--grad)}
+.take small{display:block;font-size:11px;letter-spacing:.08em;text-transform:uppercase;opacity:.65;margin-bottom:6px;font-weight:600}
+.take p{margin:0;font-size:15.5px;line-height:1.55}
+.ins{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.ic{background:var(--sand-2);border-radius:var(--radius);padding:18px 20px}
+.ic h3{margin:0 0 12px;font-size:13px;font-weight:600;display:flex;align-items:center;gap:8px}
+.ic h3 i{width:10px;height:10px;border-radius:50%;display:inline-block;font-style:normal}
+.ic ul{margin:0;padding:0;list-style:none;display:grid;gap:10px}
+.ic li{font-size:13px;line-height:1.45;color:var(--ink-2)}
+.ic li b{display:block;color:var(--ink);font-size:13px;font-weight:600;margin-bottom:2px}
+.ic li span{color:var(--muted)}
+.bars{display:grid;gap:9px}
+.bars div{font-size:12.5px}
+.bars em{font-style:normal;display:flex;justify-content:space-between;color:var(--ink-2);margin-bottom:4px}
+.bars s{display:block;height:8px;border-radius:6px;background:var(--line);overflow:hidden;text-decoration:none}
+.bars s u{display:block;height:100%;border-radius:6px;background:var(--ink)}
+.ic .sub{margin:14px 0 8px;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600}
+@media (max-width:1100px){.ins{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:620px){.ins{grid-template-columns:1fr}.take{padding:18px}}
 .tools{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:8px 0 22px}
 .search{flex:1;min-width:200px;display:flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:999px;padding:0 16px;background:var(--panel)}
 .search input{border:0;outline:0;background:transparent;color:var(--ink);font:400 14px Sora;padding:11px 0;width:100%}
@@ -155,6 +176,7 @@ dialog::backdrop{background:rgba(10,10,10,.45);backdrop-filter:blur(2px)}
     <div class="ticker"></div>
   </section>
   <section class="kpis" id="kpis"></section>
+  <section class="insights" id="insights" aria-label="Summary"></section>
   <section class="tools">
     <div class="search">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--muted)"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
@@ -168,6 +190,7 @@ dialog::backdrop{background:rgba(10,10,10,.45);backdrop-filter:blur(2px)}
 <dialog id="dlg" aria-label="Ad details"><div id="dlgBody"></div></dialog><div class="toast" id="toast"></div>
 
 <script src="data.js"></script>
+<script src="summary.js"></script>
 <script>
 const $=s=>document.querySelector(s), esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const COLORS=['#f2552c','#f0a6d8','#45c4dc','#f3e33a','#dfdad5','#c7b8ff'];
@@ -327,7 +350,25 @@ function drawD(onlyTab){
 document.addEventListener('keydown',e=>{if(!$('#dlg').open)return;if(e.key==='ArrowRight')step(1);if(e.key==='ArrowLeft')step(-1)});
 $('#dlg').addEventListener('close',()=>document.querySelectorAll('#dlg video').forEach(v=>v.pause()));
 $('#dlg').addEventListener('click',e=>{if(e.target.id==='dlg')$('#dlg').close()});
-function render(){kpis();const a=rows();$('#grid').innerHTML=a.length?a.map(card).join(''):'<div class="empty">No ads match.</div>'}
+function fmtGroup(v){v=(v||'').toLowerCase();
+  if(/celebr/.test(v))return 'Celebrity';if(/skit|narrative/.test(v))return 'Skit';if(/store/.test(v))return 'Store visit';
+  if(/ugc|selfie|vlog|haul|unbox|testimonial/.test(v))return 'Creator UGC';if(/model|lookbook/.test(v))return 'Model lookbook';
+  if(/studio|product/.test(v))return 'Product close-up';if(/anim|motion/.test(v))return 'Animation';return 'Cinematic / other'}
+const LANG={en:'English',hi:'Hindi',ta:'Tamil',te:'Telugu',kn:'Kannada',ml:'Malayalam',bn:'Bengali',gu:'Gujarati',mr:'Marathi'};
+function bars(pairs,total){return `<div class="bars">${pairs.map(([k,n])=>`<div><em><span>${esc(k)}</span><span>${Math.round(100*n/total)}%</span></em><s><u style="width:${Math.round(100*n/total)}%"></u></s></div>`).join('')}</div>`}
+function insights(){
+  const S=(window.SUMMARY||{})[state.brand];if(!S){$('#insights').innerHTML='';return}
+  const a=window.ADS[state.brand],cnt=(f)=>{const m={};a.forEach(x=>{const k=f(x);if(k)m[k]=(m[k]||0)+1});return Object.entries(m).sort((p,q)=>q[1]-p[1])};
+  const fm=cnt(x=>fmtGroup(x.visual)).slice(0,4), lg=cnt(x=>x.lang?(LANG[x.lang]||'Other'):'No speech').slice(0,3);
+  $('#insights').innerHTML=`<div class="take"><div><small>Key takeaway</small><p>${esc(S.takeaway)}</p></div></div>
+  <div class="ins">
+    <div class="ic"><h3><i style="background:var(--orange)"></i>Common hooks</h3><ul>${S.hooks.map(([t,e])=>`<li><b>${esc(t)}</b><span>${esc(e)}</span></li>`).join('')}</ul></div>
+    <div class="ic"><h3><i style="background:var(--pink)"></i>Problems they solve</h3><ul>${S.problems.map(p=>`<li>${esc(p)}</li>`).join('')}</ul></div>
+    <div class="ic"><h3><i style="background:var(--yellow)"></i>Offers & CTAs</h3><ul>${S.offers.map(p=>`<li>${esc(p)}</li>`).join('')}</ul></div>
+    <div class="ic"><h3><i style="background:var(--cyan)"></i>Formats & voice</h3>${bars(fm,a.length)}<div class="sub">Language</div>${bars(lg,a.length)}</div>
+  </div>`;
+}
+function render(){kpis();insights();const a=rows();$('#grid').innerHTML=a.length?a.map(card).join(''):'<div class="empty">No ads match.</div>'}
 $('#q').oninput=e=>{state.q=e.target.value;render()};
 const ALL_SORTS=[['new','Newest first'],['long','Longest running'],['copies','Most ads using the video'],['spend','Highest est. spend'],['length','Longest video'],['az','Creator A–Z'],['za','Creator Z–A']];
 const sortsFor=b=>ALL_SORTS.filter(([k])=>k!=='spend'||window.ADS[b].some(x=>x.spend));
