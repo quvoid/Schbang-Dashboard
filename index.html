@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Creator Partnership Ads</title>
-<meta name="description" content="Creator partnership ads running on Meta for Palmonas, GIVA, The Amethyst Store and Indriya, with hooks, ad copy and transcripts.">
+<meta name="description" content="Creator partnership ads running on Meta for Palmonas, GIVA, The Amethyst Store, Indriya and Grüns, with hooks, ad copy and transcripts.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -152,6 +152,15 @@ select.pill{appearance:none;padding-right:36px;background-image:url("data:image/
 .actions{display:grid;grid-template-columns:1fr 1.4fr;gap:10px;padding:0 12px 14px}
 .actions a,.actions button{justify-content:center;width:100%}
 .ghost{border:1px solid var(--line);background:var(--panel);border-radius:999px;padding:10px;font:600 14px Sora;color:var(--ink);cursor:pointer;display:inline-flex;gap:8px;align-items:center;text-decoration:none}
+.car{position:absolute;inset:0}.car>img,.car>video{width:100%;height:100%;object-fit:contain;display:block;background:#000}
+.cnav{position:absolute;top:50%;transform:translateY(-50%);width:34px;height:34px;border-radius:50%;border:0;background:rgba(255,255,255,.9);color:#121212;display:grid;place-items:center;cursor:pointer;z-index:3;box-shadow:0 4px 12px rgba(0,0,0,.25)}
+.cnav.l{left:8px}.cnav.r{right:8px}.cnav:disabled{opacity:0;pointer-events:none}
+.cdots{position:absolute;bottom:10px;left:50%;transform:translateX(-50%);display:flex;gap:5px;z-index:3}
+.cdots i{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.45)}.cdots i.on{background:#fff}
+.ktag{position:absolute;top:10px;left:10px;z-index:3;background:rgba(0,0,0,.7);color:#fff;font-size:11px;font-weight:600;padding:3px 8px;border-radius:6px}
+.prev .vid .car{position:relative;aspect-ratio:9/14}
+.sig{display:flex;flex-wrap:wrap;gap:6px;padding:0 16px 8px}.sig span{font-size:11px;font-weight:600;border-radius:999px;padding:2px 8px;background:var(--sand-2);color:var(--ink-2)}
+.sig span.c{background:var(--ink);color:var(--bg)}
 .empty{grid-column:1/-1;text-align:center;color:var(--muted);padding:60px 0}
 /* detail drawer */
 dialog{border:0;padding:0;margin:0 0 0 auto;height:100vh;max-height:100vh;width:min(1180px,100vw);max-width:100vw;background:var(--panel);color:var(--ink);border-radius:22px 0 0 22px;box-shadow:-20px 0 60px rgba(0,0,0,.18)}
@@ -228,12 +237,14 @@ dialog::backdrop{background:rgba(10,10,10,.45);backdrop-filter:blur(2px)}
 
 <dialog id="dlg" aria-label="Ad details"><div id="dlgBody"></div></dialog><div class="toast" id="toast"></div>
 
-<script src="data.js?v=202610191422"></script>
-<script src="summary.js?v=202610191422"></script>
+<script src="data.js?v=202610231500"></script>
+<script src="summary.js?v=202610231500"></script>
 <script>
 const $=s=>document.querySelector(s), esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const COLORS=['#f2552c','#f0a6d8','#45c4dc','#f3e33a','#dfdad5','#c7b8ff'];
-const state={brand:null,q:'',status:'all',sort:'new',hook:null,lang:null};
+const state={brand:null,q:'',status:'all',sort:'new',hook:null,lang:null,kind:null,partner:null};
+const KIND={video:'Video',carousel:'Carousel',image:'Image'};
+const isMix=b=>(window.ADS[b]||[]).some(x=>x.kind);
 try{const t=localStorage.getItem('theme');if(t)document.documentElement.dataset.theme=t;state.brand=localStorage.getItem('brand')}catch(e){}
 const brands=Object.keys(window.ADS);
 if(!brands.includes(state.brand))state.brand=brands[0];
@@ -249,7 +260,9 @@ function rows(){
   const q=state.q.toLowerCase();
   if(q)a=a.filter(x=>[x.creator,x.handle,x.hook,x.copy,x.headline,x.problem].join(' ').toLowerCase().includes(q));
   if(state.status!=='all')a=a.filter(x=>state.status==='live'?x.live:!x.live);
-  if(state.hook)a=a.filter(x=>x.hookType===state.hook);
+  if(state.hook)a=a.filter(x=>x.hookType===state.hook||(x.angles||[]).includes(state.hook));
+  if(state.kind)a=a.filter(x=>x.kind===state.kind);
+  if(state.partner)a=a.filter(x=>state.partner==='creator'?x.partner:!x.partner);
   if(state.lang)a=a.filter(x=>x.langKey===state.lang);
   const nm=x=>x.creator.replace(/^[^A-Za-z0-9]+/,'').toLowerCase();
   const sp=x=>x.spend===''||x.spend==null?-1:+x.spend;
@@ -267,6 +280,10 @@ function rows(){
 function kpis(){
   const a=window.ADS[state.brand], live=a.filter(x=>x.live).length, creators=new Set(a.map(x=>x.creator)).size, nads=a.reduce((s,x)=>s+(x.nads||1),0);
   const avg=Math.round(a.reduce((s,x)=>s+(x.days||0),0)/a.length);
+  if(isMix(state.brand)){const p=a.filter(x=>x.partner),k=t=>a.filter(x=>x.kind===t).length;
+    $('#title').textContent=`${state.brand} · ads launched in the last 7 days`;
+    $('#kpis').innerHTML=[[a.length,'New ads launched (16–23 Oct)'],[p.length,'Creator partnership ads'],[new Set(p.map(x=>x.creator)).size,'Creators'],[`${k('video')} · ${k('carousel')} · ${k('image')}`,'Videos · carousels · images']]
+      .map(([b,s])=>`<div class="kpi"><b>${b}</b><span>${s}</span></div>`).join('');return}
   $('#title').textContent=`${state.brand} · creator partnership ads`;
   void `Every Meta ad ${state.brand} runs together with a creator ("<creator> with ${state.brand}"), 1 Sep – ${window.UPDATED}. Click a video to play it, or "See details" for the hook, ad copy, variants and transcript.`;
   $('#kpis').innerHTML=[[a.length,'Unique creatives'],[nads,'Partnership ads'],[creators,'Creators'],[avg+' days','Average time running']]
@@ -286,12 +303,13 @@ function card(x,i){
       ${x.nads>1?`<span class="tag" title="Same video running as ${x.nads} separate ads">Used in ${x.nads} ads</span>`:''}
     </div>
     <div class="who"><div class="av" style="background:${colorFor(x.creator)}">${esc(initials(x.creator))}</div>
-      <div style="min-width:0"><b>${esc(x.creator)}</b><small>${x.handle?'@'+esc(x.handle):'Facebook page'} · with ${esc(x.brand)}</small></div></div>
+      <div style="min-width:0"><b>${esc(x.creator)}</b><small>${x.partner===false?'Brand ad · '+esc(KIND[x.kind]):(x.handle?'@'+esc(x.handle):'Facebook page')+' · with '+esc(x.brand)}</small></div></div>
+    ${x.signals?`<div class="sig">${x.partner?'<span class="c">Creator collab</span>':''}${x.signals.filter(s=>!/creator|^new$/i.test(s)).map(s=>`<span>${esc(s)}</span>`).join('')}${(x.offers||[]).slice(0,2).map(s=>`<span>${esc(s)}</span>`).join('')}</div>`:''}
     <button class="htag" onclick="setHook('${esc(x.hookType)}')" title="Show all ads with this hook" aria-label="Filter by hook">🎣 ${esc(x.hookType)}</button>
     ${x.langTheme?`<div class="ltheme"><b>🌐 ${esc(x.langName)} · what it says</b>${esc(x.langTheme)}</div>`:''}
     <div class="copy"><div class="clamp">${esc(x.copy||x.hook||'')}</div>${(x.copy||'').length>110?`<button onclick="openD('${x.id}')">See more</button>`:''}</div>
     <div class="media" data-id="${x.id}">
-      ${x.type==='video'?`<img src="${x.poster}" alt="" loading="lazy"><div class="play" onclick="play(this)"><span><svg width="22" height="22" viewBox="0 0 24 24"><path d="M7 4l13 8-13 8z" fill="#121212"/></svg></span></div>${x.length?`<span class="len">${x.length}s</span>`:''}`
+      ${x.kind==='carousel'?carousel(x):x.type==='video'?`<img src="${x.poster}" alt="" loading="lazy"><div class="play" onclick="play(this)"><span><svg width="22" height="22" viewBox="0 0 24 24"><path d="M7 4l13 8-13 8z" fill="#121212"/></svg></span></div>${x.length?`<span class="len">${x.length}s</span>`:''}`
         :`<img src="${x.media}" alt="" loading="lazy">`}
     </div>
     <div class="foot"><div class="t"><small>${esc(host(x.link))}</small><b>${esc(x.headline||x.creator)}</b></div>
@@ -302,7 +320,15 @@ function card(x,i){
     </div>
   </article>`;
 }
+function carousel(x,big){const c=x.cards,i=x._ci||0,m=c[i];
+  return `<div class="car" data-id="${x.id}">${m.type==='video'?(big?`<video src="${m.media}" controls playsinline poster="${m.poster}"></video>`:`<img src="${m.poster}" alt="" loading="lazy"><div class="play" onclick="play(this.parentElement)"><span><svg width="22" height="22" viewBox="0 0 24 24"><path d="M7 4l13 8-13 8z" fill="#121212"/></svg></span></div>`):`<img src="${m.media}" alt="" loading="lazy">`}
+    <span class="ktag">Carousel · ${i+1}/${c.length}</span>${m.length?`<span class="len">${m.length}s</span>`:''}
+    <button class="cnav l" ${i?'':'disabled'} onclick="slide('${x.id}',-1,${!!big})" aria-label="Previous card">${ICON.left}</button><button class="cnav r" ${i<c.length-1?'':'disabled'} onclick="slide('${x.id}',1,${!!big})" aria-label="Next card">${ICON.right}</button>
+    <div class="cdots">${c.map((_,j)=>`<i class="${j===i?'on':''}"></i>`).join('')}</div></div>`}
+function slide(id,d,big){const x=find(id);x._ci=Math.max(0,Math.min(x.cards.length-1,(x._ci||0)+d));
+  document.querySelectorAll(`.car[data-id="${id}"]`).forEach(el=>{const inDlg=!!el.closest('#dlg');if(inDlg!==big)return;el.querySelectorAll('video').forEach(v=>v.pause());el.outerHTML=carousel(x,inDlg)})}
 function play(el){
+  if(el.classList.contains('car')){const x=find(el.dataset.id),m=x.cards[x._ci||0];document.querySelectorAll('.media video').forEach(v=>v.pause());el.querySelector('img').outerHTML=`<video src="${m.media}" controls autoplay playsinline poster="${m.poster}"></video>`;el.querySelector('.play').remove();return}
   const box=el.parentElement, x=find(box.dataset.id);
   document.querySelectorAll('.media video').forEach(v=>v.pause());
   box.innerHTML=`<video src="${x.media}" controls autoplay playsinline poster="${x.poster}"></video>`;
@@ -337,12 +363,14 @@ function tabBody(x){
     </div>
     <div class="box"><h4>Creator</h4>
       ${kv('user','Name',esc(x.creator))}
-      ${kv('user','Handle',x.handle?'@'+esc(x.handle):'Facebook page only')}
+      ${x.partner===false?kv('user','Type','Brand ad, no creator'):kv('user','Handle',x.handle?'@'+esc(x.handle):'Facebook page only')}
       ${kv('ext','Profile',x.profile?`<a href="${esc(x.profile)}" target="_blank" rel="noopener">${esc(x.profile.replace(/^https?:\/\/(www\.)?/,''))}</a>`:'—')}
     </div>
     <div class="box"><h4>Creative & links</h4>
       ${kv('id',x.nads>1?'Meta Library IDs':'Meta Library ID',(x.ids||[x.id]).map(i=>`<a href="https://www.facebook.com/ads/library/?id=${i}" target="_blank" rel="noopener">${i}</a>`).join('<br>'))}
-      ${kv('fmt','Format',`${x.type==='video'?'Video':'Image'}${x.length?' · '+x.length+'s':''}`)}
+      ${kv('fmt','Format',x.kind?`${KIND[x.kind]}${x.cards&&x.cards.length?' · '+x.cards.length+' cards':''}${x.length?' · '+x.length+'s':''}`:`${x.type==='video'?'Video':'Image'}${x.length?' · '+x.length+'s':''}`)}
+      ${x.offers?kv('coin','Offers',esc(x.offers.join(', ')||'—')):''}
+      ${x.angles?kv('pulse','Angles',esc(x.angles.join(', ')||'—')):''}
       ${kv('reuse','Copy versions',x.variants.length?`${x.variants.length+1} versions`:'1 version')}
       ${kv('lang','Language',x.langName?esc(x.langName)+' · translated':x.lang?({en:'English',hi:'Hindi',ta:'Tamil',te:'Telugu',kn:'Kannada',ml:'Malayalam'}[x.lang]||x.lang):'—')}
       ${kv('globe','Landing page',x.link?`<a href="${esc(x.link)}" target="_blank" rel="noopener">${esc(x.link.replace(/^https?:\/\//,''))}</a>`:'—')}
@@ -360,13 +388,14 @@ function drawD(onlyTab){
   const x=cur.list[cur.i];
   if(onlyTab&&$('#sideBody')){$('#sideBody').innerHTML=tabBody(x);document.querySelectorAll('.tabs button').forEach(b=>b.classList.toggle('on',b.dataset.t===cur.tab));return}
   document.querySelectorAll('#dlg video').forEach(v=>v.pause());
-  const T=[['details','Ad details'],['analysis','Creative analysis'],['transcript','Transcript'],['copy','Copy & variants']];
+  const T=[['details','Ad details'],['analysis','Creative analysis'],['transcript','Transcript'],['copy','Copy & variants']].filter(([k])=>!x.kind||!['analysis','transcript'].includes(k)||(k==='transcript'?x.transcript:x.hook));
+  if(!T.some(t=>t[0]===cur.tab))cur.tab='details';
   $('#dlgBody').innerHTML=`
   <div class="dh">
     <button class="ib" onclick="step(-1)" ${cur.i===0?'disabled':''} aria-label="Previous ad">${ICON.left}</button>
     <span class="ctr">${cur.i+1}/${cur.list.length}</span>
     <button class="ib" onclick="step(1)" ${cur.i===cur.list.length-1?'disabled':''} aria-label="Next ad">${ICON.right}</button>
-    <span class="plat">${ICON.plat}${x.platforms.slice(0,2).map(p=>PLAT[p]||p).join(' • ')}${x.platforms.length>2?' +'+(x.platforms.length-2):''} &nbsp;•&nbsp; ${x.type==='video'?'Video':'Image'}</span>
+    <span class="plat">${ICON.plat}${x.platforms.slice(0,2).map(p=>PLAT[p]||p).join(' • ')}${x.platforms.length>2?' +'+(x.platforms.length-2):''} &nbsp;•&nbsp; ${x.kind?KIND[x.kind]:x.type==='video'?'Video':'Image'}</span>
     <button class="ib" onclick="dlg.close()" aria-label="Close">${ICON.x}</button>
     <span class="sp"></span>
     <button class="ib" title="Copy ad copy" onclick="navigator.clipboard.writeText(cur.list[cur.i].copy||'').then(()=>toast('Ad copy copied'))">${ICON.copy}</button>
@@ -381,7 +410,7 @@ function drawD(onlyTab){
         <div class="who"><div class="av" style="background:${colorFor(x.creator)}">${esc(initials(x.creator))}</div>
           <div style="min-width:0"><b>${esc(x.creator)}</b><small><span class="dot ${x.live?'':'off'}" style="display:inline-block;margin-right:4px"></span>with ${esc(x.brand)} · Sponsored</small></div></div>
         <div class="copy"><div class="clamp" id="pc">${esc(x.copy)}</div>${(x.copy||'').length>110?`<button onclick="const c=$('#pc');c.classList.toggle('clamp');this.textContent=c.classList.contains('clamp')?'See more':'See less'">See more</button>`:''}</div>
-        <div class="vid">${x.type==='video'?`<video src="${x.media}" controls playsinline poster="${x.poster}"></video>`:`<img src="${x.media}" alt="">`}</div>
+        <div class="vid">${x.kind==='carousel'?carousel(x,true):x.type==='video'?`<video src="${x.media}" controls playsinline poster="${x.poster}"></video>`:`<img src="${x.media}" alt="">`}</div>
         <div class="foot"><div class="t"><small>${esc(host(x.link))}</small><b>${esc(x.headline||x.creator)}</b></div>${x.link?`<a class="cta" href="${esc(x.link)}" target="_blank" rel="noopener">${esc(x.cta||'Open')}</a>`:''}</div>
       </div>
     </div>
@@ -403,18 +432,23 @@ function bars(pairs,total){return `<div class="bars">${pairs.map(([k,n])=>`<div>
 function insights(){
   const S=(window.SUMMARY||{})[state.brand];if(!S){$('#insights').innerHTML='';return}
   const a=window.ADS[state.brand],cnt=(f)=>{const m={};a.forEach(x=>{const k=f(x);if(k)m[k]=(m[k]||0)+1});return Object.entries(m).sort((p,q)=>q[1]-p[1])};
-  const fm=cnt(x=>fmtGroup(x.visual)).slice(0,4), lg=cnt(x=>x.langKey).slice(0,4);
+  const mix=isMix(state.brand),fm=mix?cnt(x=>KIND[x.kind]):cnt(x=>fmtGroup(x.visual)).slice(0,4), lg=mix?cnt(x=>x.partner?'Creator partnership':'Brand ad'):cnt(x=>x.langKey).slice(0,4);
   $('#insights').innerHTML=`<div class="take"><div><small>Key takeaway</small><p>${esc(S.takeaway)}</p></div></div>
   <div class="ins">
-    <div class="ic"><h3><i style="background:var(--orange)"></i>Common hooks</h3><ul class="hks">${S.hooks.map(([t,e])=>{const n=a.filter(x=>x.hookType===t).length;return `<li class="hk ${state.hook===t?'on':''}" role="button" tabindex="0" onclick="setHook('${esc(t)}')" onkeydown="if(event.key==='Enter')setHook('${esc(t)}')"><b>${esc(t)}<em>${n} ad${n===1?'':'s'}</em><span class="go">${state.hook===t?'✓':'→'}</span></b><span>${esc(e)}</span></li>`}).join('')}</ul></div>
+    <div class="ic"><h3><i style="background:var(--orange)"></i>${mix?'Top angles':'Common hooks'}</h3><ul class="hks">${S.hooks.map(([t,e])=>{const n=a.filter(x=>x.hookType===t||(x.angles||[]).includes(t)).length;return `<li class="hk ${state.hook===t?'on':''}" role="button" tabindex="0" onclick="setHook('${esc(t)}')" onkeydown="if(event.key==='Enter')setHook('${esc(t)}')"><b>${esc(t)}<em>${n} ad${n===1?'':'s'}</em><span class="go">${state.hook===t?'✓':'→'}</span></b><span>${esc(e)}</span></li>`}).join('')}</ul></div>
     <div class="ic"><h3><i style="background:var(--pink)"></i>Problems they solve</h3><ul>${S.problems.map(p=>`<li>${esc(p)}</li>`).join('')}</ul></div>
     <div class="ic"><h3><i style="background:var(--yellow)"></i>Offers & CTAs</h3><ul>${S.offers.map(p=>`<li>${esc(p)}</li>`).join('')}</ul></div>
-    <div class="ic"><h3><i style="background:var(--cyan)"></i>Formats & voice</h3>${bars(fm,a.length)}<div class="sub">Language</div>${bars(lg,a.length)}</div>
+    <div class="ic"><h3><i style="background:var(--cyan)"></i>Formats & voice</h3>${bars(fm,a.length)}<div class="sub">${mix?'Who fronts it':'Language'}</div>${bars(lg,a.length)}</div>
   </div>${((window.COHORTS||{})[state.brand]||[]).length?`<div class="coh"><h3><i style="width:10px;height:10px;border-radius:50%;background:var(--grad);display:inline-block"></i>Regional languages – what they say</h3><p>Every non-English video was re-transcribed and translated to English. Click a language to see those reels with their translation.</p><div class="cohg">${window.COHORTS[state.brand].map(([l,n,t])=>{const k=a.filter(x=>x.langKey===l).length;return `<div class="cb ${state.lang===l?'on':''} ${k?'':'off'}" ${k?`role="button" tabindex="0" onclick="setLang('${esc(l)}')" onkeydown="if(event.key==='Enter')setLang('${esc(l)}')"`:''}><b>${esc(l)}${k?`<em>${k} creator reel${k===1?'':'s'}</em>`:''}</b>${esc(t)}<span class="cgo">${k?`${state.lang===l?'✓ Showing':'View'} ${k} partnership reel${k===1?'':'s'} ${state.lang===l?'':'→'}`:'No partnership reels in this language'}</span></div>`}).join('')}</div></div>`:''}`;
 }
 function hookbar(){
   const a=window.ADS[state.brand],m={};a.forEach(x=>m[x.hookType]=(m[x.hookType]||0)+1);
   const list=Object.entries(m).sort((p,q)=>q[1]-p[1]);
+  if(isMix(state.brand)){const am={};a.forEach(x=>(x.angles||[]).forEach(g=>am[g]=(am[g]||0)+1));
+    const chips=(lbl,key,opts)=>`<div class="hookbar" style="margin:0 0 10px"><span class="lbl">${lbl}</span><button class="chip-f ${!state[key]?'on':''}" onclick="setF('${key}',null)">All <b>${a.length}</b></button>`+opts.map(([v,t,n])=>`<button class="chip-f ${state[key]===v?'on':''}" onclick="setF('${key}','${esc(v)}')">${esc(t)} <b>${n}</b></button>`).join('')+'</div>';
+    $('#hookbar').innerHTML=chips('Ad type','partner',[['creator','Creator partnership',a.filter(x=>x.partner).length],['brand','Brand ads',a.filter(x=>!x.partner).length]])
+      +chips('Format','kind',['video','carousel','image'].map(k=>[k,KIND[k],a.filter(x=>x.kind===k).length]))
+      +chips('Angle','hook',Object.entries(am).sort((p,q)=>q[1]-p[1]).map(([k,n])=>[k,k,n]));return}
   $('#hookbar').innerHTML=`<span class="lbl">Hook</span><button class="chip-f ${!state.hook?'on':''}" onclick="setHook(null)">All <b>${a.length}</b></button>`+
     list.map(([k,n])=>`<button class="chip-f ${state.hook===k?'on':''}" onclick="setHook('${esc(k)}')">${esc(k)} <b>${n}</b></button>`).join('')+langbar();
 }
@@ -425,8 +459,9 @@ function langbar(){
     order.map(([k,n])=>`<button class="chip-f ${state.lang===k?'on':''}" onclick="setLang('${esc(k)}')">${esc(k)}${!['English','No speech'].includes(k)?' 🌐':''} <b>${n}</b></button>`).join('')+'</div>';
 }
 function setLang(l){state.lang=(l&&state.lang!==l)?l:null;render();const g=$('#hookbar');if(g&&l)g.scrollIntoView({behavior:'smooth',block:'start'})}
+function setF(k,v){state[k]=(v&&state[k]!==v)?v:null;render()}
 function setHook(h){state.hook=(h&&state.hook!==h)?h:null;render();const g=$('#hookbar');if(g&&h)g.scrollIntoView({behavior:'smooth',block:'start'})}
-function render(){kpis();insights();hookbar();const a=rows();const fl=[state.hook&&`hook <b>${esc(state.hook)}</b>`,state.lang&&`language <b>${esc(state.lang)}</b>`].filter(Boolean).join(' and ');$('#grid').innerHTML=(fl?`<div class="hookline" style="grid-column:1/-1"><span>Showing <b>${a.length}</b> creative${a.length===1?'':'s'} with the ${fl}</span><button onclick="state.hook=null;state.lang=null;render()">Clear ✕</button></div>`:'')+(a.length?a.map(card).join(''):'<div class="empty">No ads match.</div>')}
+function render(){kpis();insights();hookbar();const a=rows();const fl=[state.partner&&`type <b>${state.partner==='creator'?'creator partnership':'brand ad'}</b>`,state.kind&&`format <b>${KIND[state.kind]}</b>`,state.hook&&`${isMix(state.brand)?'angle':'hook'} <b>${esc(state.hook)}</b>`,state.lang&&`language <b>${esc(state.lang)}</b>`].filter(Boolean).join(' and ');$('#grid').innerHTML=(fl?`<div class="hookline" style="grid-column:1/-1"><span>Showing <b>${a.length}</b> creative${a.length===1?'':'s'} with the ${fl}</span><button onclick="state.hook=null;state.lang=null;state.kind=null;state.partner=null;render()">Clear ✕</button></div>`:'')+(a.length?a.map(card).join(''):'<div class="empty">No ads match.</div>')}
 $('#q').oninput=e=>{state.q=e.target.value;render()};
 const ALL_SORTS=[['new','Newest first'],['long','Longest running'],['copies','Most ads using the video'],['spend','Highest est. spend'],['length','Longest video'],['az','Creator A–Z'],['za','Creator Z–A']];
 const sortsFor=b=>ALL_SORTS.filter(([k])=>k!=='spend'||window.ADS[b].some(x=>x.spend));
@@ -440,7 +475,7 @@ function dropdown(el,label,opts,get,set){
 }
 document.addEventListener('click',()=>document.querySelectorAll('.dd.open').forEach(d=>d.classList.remove('open')));
 document.addEventListener('keydown',e=>{if(e.key==='Escape')document.querySelectorAll('.dd.open').forEach(d=>d.classList.remove('open'))});
-dropdown($('#brandDD'),'Brand',brands.map(b=>[b,b,`${window.ADS[b].length} creatives · ${window.ADS[b].reduce((s,x)=>s+(x.nads||1),0)} ads`]),()=>state.brand,v=>{state.brand=v;state.hook=null;state.lang=null;try{localStorage.setItem('brand',v)}catch(_){};drawSort();render()});
+dropdown($('#brandDD'),'Brand',brands.map(b=>[b,b,`${window.ADS[b].length} creatives · ${window.ADS[b].reduce((s,x)=>s+(x.nads||1),0)} ads`]),()=>state.brand,v=>{state.brand=v;state.hook=null;state.lang=null;state.kind=null;state.partner=null;try{localStorage.setItem('brand',v)}catch(_){};drawSort();render()});
 drawSort();
 $('#theme').onclick=()=>{const r=document.documentElement,dark=r.dataset.theme==='dark';r.dataset.theme=dark?'light':'dark';try{localStorage.setItem('theme',r.dataset.theme)}catch(_){}};
 render();

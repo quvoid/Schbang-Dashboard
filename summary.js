@@ -69,3 +69,25 @@ window.SUMMARY = {
 };
 
 window.COHORTS={"Palmonas": [["Hindi / Hinglish", 23, "Hard-sell and festive: limited-time offers (15–20% off 9KT gold, BOGO, end-of-season sale, gift-box combos), Karwa Chauth and Mangalsutra collections, the platinum-plated silver launch, and trust lines ('survey: customers pick us for design, quality, price', 'designs are real, not AI'). English ads lean on lifestyle; Hindi ads carry the deals."], ["Kannada", 2, "Bangalore-local: 20% off 9KT gold, 'simple, classy, confidence-boosting' everyday pieces, 'best prices in Bangalore'."]], "GIVA": [["Hindi / Hinglish", 9, "Gifting and emotion: GIVA silver as the modern, hassle-free festive gift, 'lasts longer than the moment', love and commitment lines, plus the men's range ('confident man who draws attention', mix-and-match)."], ["Gujarati", 2, "Navratri: sparkle tied to garba, pandal-hopping and festival energy; one go-to silver set for every festive and everyday look."]], "The Amethyst Store": [["Tamil", 11, "Store-and-trust pitch for Tamil Nadu: honour the 'devis' in your life at Navaratri, Buy-more-save-more offers across many stores, the Old Jewellery Exchange (92.5 silver, 24K gold-plated), family warmth and gratitude, 'award-winning' Sri Vasavi heritage."], ["Telugu", 5, "Offer-led for Andhra / Telangana: big discounts with free shipping, in-store or online with video-call shopping, bridal glamour ('instant statement for wedding looks'), and 'wear it again and again' silver."], ["Kannada", 1, "Premium festive collection in high-purity silver and 24K gold, with the exchange offer."]], "Indriya": [["Hindi / Hinglish", 2, "Emotion and romance: Tinaa Dattaa's Durga Puja memories with her mother ('the heart finds its home again') and Jheel Mehta's Navratri couple skit ending in a jewellery surprise."], ["Telugu", 2, "Festive ritual: Zee Telugu's muggu-sharing contest (win a 22KT gold coin) and Ananya Nagalla's Dasara-dolls home story for the Padmika collection."], ["Kannada", 1, "Mysore Dasara and Amma: a daughter's story of her mother's magic, with up to 30% off gold making charges."]]};
+
+window.SUMMARY["Grüns"] = {
+  takeaway: "Grüns launched 263 new ads in 7 days, and the offer is the same almost everywhere: up to 61% off plus free gifts for first-time subscribers. About 1 in 4 (74) are fronted by creators and celebrities, led by Jenna Bush Hager (10 ads with her own landing page), Julianne Hough and Jennifer Love Hewitt. The other lever is landing-page testing: the same gummy is sold through flip-to-win, GLP-1, gut-health, menopause and Shrek-themed pages.",
+  hooks: [
+    ["Discount / offer", "'Grüns is too expensive — here's 61% off to prove otherwise', 'Your vitamins are on sale. Like, really on sale.'"],
+    ["Gifting", "Free gifts with the first order, from 'Free gift' to '61% OFF + 4 FREE gifts' on the creator pages"],
+    ["New launch", "New flavours and packs, plus the first-order and flip-to-win pages"],
+    ["Convenience", "'No powders. No horse pills. No excuses.' One gummy replaces a cabinet of supplements"]
+  ],
+  problems: [
+    "Too many pills and powders: 21 vitamins and minerals, prebiotics and fibre in one gummy",
+    "Gut health and digestion (first-order-gut-health, gwp-gut-health pages)",
+    "Weight loss and GLP-1 users who need nutrition and muscle support",
+    "Menopause and life-stage health, with pages for women and for men"
+  ],
+  offers: [
+    "Up to 61% off for new subscribers, named on 134 ads (55% and 52% versions are also being tested)",
+    "Free gifts with the first order on 146 ads",
+    "Free shipping on 57 ads, and subscriptions you can cancel any time",
+    "CTA is Shop now; every ad sends people to a gruns.co/pages/ landing page, not the homepage"
+  ]
+};
