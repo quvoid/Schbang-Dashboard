@@ -161,6 +161,10 @@ select.pill{appearance:none;padding-right:36px;background-image:url("data:image/
 .prev .vid .car{position:relative;aspect-ratio:9/14}
 .sig{display:flex;flex-wrap:wrap;gap:6px;padding:0 16px 8px}.sig span{font-size:11px;font-weight:600;border-radius:999px;padding:2px 8px;background:var(--sand-2);color:var(--ink-2)}
 .sig span.c{background:var(--ink);color:var(--bg)}
+.modebar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:16px}.modebar .seg button{font-size:13.5px;padding:8px 16px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;padding:4px 12px 10px}.stats div{background:var(--sand-2);border-radius:10px;padding:8px 6px;text-align:center}
+.stats b{display:block;font-size:15px;font-weight:600}.stats span{font-size:10.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.paidtag{font-size:11px;font-weight:600;border-radius:8px;padding:4px 8px;background:var(--ink);color:var(--bg)}.paidtag.j{background:var(--sand-2);color:var(--ink-2)}
 .empty{grid-column:1/-1;text-align:center;color:var(--muted);padding:60px 0}
 /* detail drawer */
 dialog{border:0;padding:0;margin:0 0 0 auto;height:100vh;max-height:100vh;width:min(1180px,100vw);max-width:100vw;background:var(--panel);color:var(--ink);border-radius:22px 0 0 22px;box-shadow:-20px 0 60px rgba(0,0,0,.18)}
@@ -220,6 +224,7 @@ dialog::backdrop{background:rgba(10,10,10,.45);backdrop-filter:blur(2px)}
 <main class="wrap">
   <section class="hero">
     <h1 id="title">Creator partnership ads</h1>
+    <div class="modebar" id="modebar"></div>
     <div class="ticker"></div>
   </section>
   <section class="kpis" id="kpis"></section>
@@ -239,11 +244,14 @@ dialog::backdrop{background:rgba(10,10,10,.45);backdrop-filter:blur(2px)}
 
 <script src="data.js?v=202610231500"></script>
 <script src="summary.js?v=202610231500"></script>
+<script src="ig.js?v=202610260020"></script>
 <script>
 const $=s=>document.querySelector(s), esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const COLORS=['#f2552c','#f0a6d8','#45c4dc','#f3e33a','#dfdad5','#c7b8ff'];
 const state={brand:null,q:'',status:'all',sort:'new',hook:null,lang:null,kind:null,partner:null};
 const KIND={video:'Video',carousel:'Carousel',image:'Image'};
+const IGD=()=>(window.IG||{})[state.brand]||[];const hasIG=b=>((window.IG||{})[b]||[]).length>0;
+Object.assign(state,{mode:'ads',collab:null,tier:null,igsort:'views'});
 const isMix=b=>(window.ADS[b]||[]).some(x=>x.kind);
 try{const t=localStorage.getItem('theme');if(t)document.documentElement.dataset.theme=t;state.brand=localStorage.getItem('brand')}catch(e){}
 const brands=Object.keys(window.ADS);
@@ -333,7 +341,7 @@ function play(el){
   document.querySelectorAll('.media video').forEach(v=>v.pause());
   box.innerHTML=`<video src="${x.media}" controls autoplay playsinline poster="${x.poster}"></video>`;
 }
-const find=id=>window.ADS[state.brand].find(x=>x.id===id);
+const find=id=>(state.mode==='ig'?IGD():window.ADS[state.brand]).find(x=>x.id===id);
 const ic=(d)=>`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${d}</svg>`;
 const ICON={pulse:ic('<path d="M22 12h-4l-3 9L9 3l-3 9H2"/>'),clock:ic('<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>'),cal:ic('<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18"/>'),
  coin:ic('<circle cx="12" cy="12" r="9"/><path d="M15 9.5c-.5-1-1.6-1.5-3-1.5-1.7 0-3 .9-3 2s1.3 1.7 3 2 3 .9 3 2-1.3 2-3 2c-1.4 0-2.5-.5-3-1.5M12 6v2M12 16v2"/>'),
@@ -386,37 +394,38 @@ function tabBody(x){
 }
 function drawD(onlyTab){
   const x=cur.list[cur.i];
-  if(onlyTab&&$('#sideBody')){$('#sideBody').innerHTML=tabBody(x);document.querySelectorAll('.tabs button').forEach(b=>b.classList.toggle('on',b.dataset.t===cur.tab));return}
+  if(onlyTab&&$('#sideBody')){$('#sideBody').innerHTML=state.mode==='ig'?igTab(x):tabBody(x);document.querySelectorAll('.tabs button').forEach(b=>b.classList.toggle('on',b.dataset.t===cur.tab));return}
   document.querySelectorAll('#dlg video').forEach(v=>v.pause());
-  const T=[['details','Ad details'],['analysis','Creative analysis'],['transcript','Transcript'],['copy','Copy & variants']].filter(([k])=>!x.kind||!['analysis','transcript'].includes(k)||(k==='transcript'?x.transcript:x.hook));
+  const ig=state.mode==='ig';
+  const T=ig?[['details','Reel details'],['transcript','Transcript'],['copy','Caption']]:[['details','Ad details'],['analysis','Creative analysis'],['transcript','Transcript'],['copy','Copy & variants']].filter(([k])=>!x.kind||!['analysis','transcript'].includes(k)||(k==='transcript'?x.transcript:x.hook));
   if(!T.some(t=>t[0]===cur.tab))cur.tab='details';
   $('#dlgBody').innerHTML=`
   <div class="dh">
     <button class="ib" onclick="step(-1)" ${cur.i===0?'disabled':''} aria-label="Previous ad">${ICON.left}</button>
     <span class="ctr">${cur.i+1}/${cur.list.length}</span>
     <button class="ib" onclick="step(1)" ${cur.i===cur.list.length-1?'disabled':''} aria-label="Next ad">${ICON.right}</button>
-    <span class="plat">${ICON.plat}${x.platforms.slice(0,2).map(p=>PLAT[p]||p).join(' • ')}${x.platforms.length>2?' +'+(x.platforms.length-2):''} &nbsp;•&nbsp; ${x.kind?KIND[x.kind]:x.type==='video'?'Video':'Image'}</span>
+    <span class="plat">${ICON.plat}${!x.platforms?'Instagram • '+esc(x.fmt)+'</span>':''}${!x.platforms?'':''}${(x.platforms||[]).slice(0,2).map(p=>PLAT[p]||p).join(' • ')}${x.platforms?(x.platforms.length>2?' +'+(x.platforms.length-2):'')+` &nbsp;•&nbsp; ${x.kind?KIND[x.kind]:x.type==='video'?'Video':'Image'}</span>`:''}
     <button class="ib" onclick="dlg.close()" aria-label="Close">${ICON.x}</button>
     <span class="sp"></span>
-    <button class="ib" title="Copy ad copy" onclick="navigator.clipboard.writeText(cur.list[cur.i].copy||'').then(()=>toast('Ad copy copied'))">${ICON.copy}</button>
-    <button class="ib" title="Copy Ad Library link" onclick="navigator.clipboard.writeText('https://www.facebook.com/ads/library/?id=${x.id}').then(()=>toast('Link copied'))">${ICON.link}</button>
+    <button class="ib" title="Copy text" onclick="navigator.clipboard.writeText(cur.list[cur.i].copy||cur.list[cur.i].caption||'').then(()=>toast('Ad copy copied'))">${ICON.copy}</button>
+    <button class="ib" title="Copy Ad Library link" onclick="navigator.clipboard.writeText('${x.platforms?'https://www.facebook.com/ads/library/?id='+x.id:esc(x.link)}').then(()=>toast('Link copied'))">${ICON.link}</button>
     <a class="ib" title="Download ${x.type}" href="${x.media}" download="${esc(x.creator).replace(/\W+/g,'_')}_${x.id}.${x.type==='video'?'mp4':'jpg'}">${ICON.dl}</a>
-    <a class="btn-dark" href="https://www.facebook.com/ads/library/?id=${x.id}" target="_blank" rel="noopener">See in Ad Library ${ICON.ext}</a>
+    <a class="btn-dark" href="${x.platforms?'https://www.facebook.com/ads/library/?id='+x.id:esc(x.link)}" target="_blank" rel="noopener">${x.platforms?'See in Ad Library':'Open on Instagram'} ${ICON.ext}</a>
   </div>
   <div class="db">
     <div class="stage">
       <div class="zoom"><button onclick="setZoom(-.1)" aria-label="Zoom out">−</button><span id="zv">${Math.round(cur.zoom*100)}%</span><button onclick="setZoom(.1)" aria-label="Zoom in">+</button></div>
       <div class="prev" style="transform:scale(${cur.zoom})">
         <div class="who"><div class="av" style="background:${colorFor(x.creator)}">${esc(initials(x.creator))}</div>
-          <div style="min-width:0"><b>${esc(x.creator)}</b><small><span class="dot ${x.live?'':'off'}" style="display:inline-block;margin-right:4px"></span>with ${esc(x.brand)} · Sponsored</small></div></div>
-        <div class="copy"><div class="clamp" id="pc">${esc(x.copy)}</div>${(x.copy||'').length>110?`<button onclick="const c=$('#pc');c.classList.toggle('clamp');this.textContent=c.classList.contains('clamp')?'See more':'See less'">See more</button>`:''}</div>
-        <div class="vid">${x.kind==='carousel'?carousel(x,true):x.type==='video'?`<video src="${x.media}" controls playsinline poster="${x.poster}"></video>`:`<img src="${x.media}" alt="">`}</div>
-        <div class="foot"><div class="t"><small>${esc(host(x.link))}</small><b>${esc(x.headline||x.creator)}</b></div>${x.link?`<a class="cta" href="${esc(x.link)}" target="_blank" rel="noopener">${esc(x.cta||'Open')}</a>`:''}</div>
+          <div style="min-width:0"><b>${esc(x.creator)}</b><small>${x.platforms?`<span class="dot ${x.live?'':'off'}" style="display:inline-block;margin-right:4px"></span>with ${esc(x.brand)} · Sponsored`:`${nf(x.followers)} followers · ${nf(x.views)} views`}</small></div></div>
+        <div class="copy"><div class="clamp" id="pc">${esc(x.copy??x.caption)}</div>${(x.copy??x.caption??'').length>110?`<button onclick="const c=$('#pc');c.classList.toggle('clamp');this.textContent=c.classList.contains('clamp')?'See more':'See less'">See more</button>`:''}</div>
+        <div class="vid">${x.missing?'<p style="color:#999;padding:40px;text-align:center">Creative unavailable</p>':x.kind==='carousel'?carousel(x,true):x.type==='video'?`<video src="${x.media}" controls playsinline poster="${x.poster}"></video>`:`<img src="${x.media}" alt="">`}</div>
+        ${x.platforms?'':'<!--'}<div class="foot"><div class="t"><small>${esc(host(x.link))}</small><b>${esc(x.headline||x.creator)}</b></div>${x.link?`<a class="cta" href="${esc(x.link)}" target="_blank" rel="noopener">${esc(x.cta||'Open')}</a>`:''}</div>${x.platforms?'':'-->'}
       </div>
     </div>
     <div class="side">
       <div class="tabs" role="tablist">${T.map(([k,l])=>`<button role="tab" data-t="${k}" class="${cur.tab===k?'on':''}" onclick="setTab('${k}')">${l}</button>`).join('')}</div>
-      <div id="sideBody">${tabBody(x)}</div>
+      <div id="sideBody">${ig?igTab(x):tabBody(x)}</div>
     </div>
   </div>`;
 }
@@ -461,11 +470,43 @@ function langbar(){
 function setLang(l){state.lang=(l&&state.lang!==l)?l:null;render();const g=$('#hookbar');if(g&&l)g.scrollIntoView({behavior:'smooth',block:'start'})}
 function setF(k,v){state[k]=(v&&state[k]!==v)?v:null;render()}
 function setHook(h){state.hook=(h&&state.hook!==h)?h:null;render();const g=$('#hookbar');if(g&&h)g.scrollIntoView({behavior:'smooth',block:'start'})}
-function render(){kpis();insights();hookbar();const a=rows();const fl=[state.partner&&`type <b>${state.partner==='creator'?'creator partnership':'brand ad'}</b>`,state.kind&&`format <b>${KIND[state.kind]}</b>`,state.hook&&`${isMix(state.brand)?'angle':'hook'} <b>${esc(state.hook)}</b>`,state.lang&&`language <b>${esc(state.lang)}</b>`].filter(Boolean).join(' and ');$('#grid').innerHTML=(fl?`<div class="hookline" style="grid-column:1/-1"><span>Showing <b>${a.length}</b> creative${a.length===1?'':'s'} with the ${fl}</span><button onclick="state.hook=null;state.lang=null;state.kind=null;state.partner=null;render()">Clear ✕</button></div>`:'')+(a.length?a.map(card).join(''):'<div class="empty">No ads match.</div>')}
+const nf=v=>v==null?'—':v>=1e9?(v/1e9).toFixed(1)+'B':v>=1e6?(v/1e6).toFixed(v>=1e7?0:1)+'M':v>=1e3?(v/1e3).toFixed(v>=1e4?0:1)+'K':String(v);
+function modebar(){const el=$('#modebar');if(!hasIG(state.brand)){el.innerHTML='';state.mode='ads';return}
+  el.innerHTML=`<div class="seg" role="tablist"><button class="${state.mode==='ads'?'on':''}" onclick="setMode('ads')">Meta partnership ads</button><button class="${state.mode==='ig'?'on':''}" onclick="setMode('ig')">Instagram creator reels · raw numbers</button></div>`}
+function setMode(m){state.mode=m;state.hook=state.lang=state.kind=state.partner=state.collab=state.tier=null;drawSort();render()}
+function igRows(){let a=[...IGD()];const q=state.q.toLowerCase();
+  if(q)a=a.filter(x=>[x.creator,x.caption,x.transcript].join(' ').toLowerCase().includes(q));
+  if(state.collab)a=a.filter(x=>x.collab===state.collab);if(state.tier)a=a.filter(x=>x.tier===state.tier);if(state.kind)a=a.filter(x=>x.kind===state.kind);
+  const k={views:'views',likes:'likes',comments:'comments',er:'er',l2v:'l2v',followers:'followers'}[state.igsort];
+  return a.sort(state.igsort==='new'?(x,y)=>y.date.localeCompare(x.date):(x,y)=>(y[k]??-1)-(x[k]??-1))}
+function igCard(x,i){return `<article class="card"><div class="rank">${i+1}</div>
+  <div class="top"><span class="chip">${esc(x.fmt)}</span><span class="chip">${esc(x.tier)} creator</span></div>
+  <div class="meta"><div><div class="status">${esc(x.date?fmtDate(x.date)+' '+x.date.slice(0,4):'')}</div><div class="dates">${nf(x.followers)} followers</div></div><span class="paidtag ${x.collab==='Paid collab'?'':'j'}">${esc(x.collab)}</span></div>
+  <div class="who"><div class="av" style="background:${colorFor(x.creator)}">${esc(initials(x.creator))}</div><div style="min-width:0"><b>@${esc(x.creator)}</b><small>with ${esc(x.brand)} on Instagram</small></div></div>
+  <div class="stats"><div><b>${nf(x.views)}</b><span>Views</span></div><div><b>${x.likesHidden?'hidden':nf(x.likes)}</b><span>Likes</span></div><div><b>${nf(x.comments)}</b><span>Comments</span></div><div><b>${x.er==null?'—':x.er+'%'}</b><span>ER</span></div></div>
+  <div class="copy"><div class="clamp">${esc(x.caption||x.transcript||'')}</div>${(x.caption||'').length>110?`<button onclick="openIG('${x.id}')">See more</button>`:''}</div>
+  <div class="media" data-id="${x.id}">${x.missing?'<div style="color:#999;display:grid;place-items:center;height:100%;font-size:13px">Creative unavailable (deleted or private)</div>':x.kind==='carousel'?carousel(x):x.type==='video'?`<img src="${x.poster}" alt="" loading="lazy"><div class="play" onclick="play(this)"><span><svg width="22" height="22" viewBox="0 0 24 24"><path d="M7 4l13 8-13 8z" fill="#121212"/></svg></span></div>${x.length?`<span class="len">${x.length}s</span>`:''}`:`<img src="${x.media}" alt="" loading="lazy">`}</div>
+  <div class="actions" style="margin-top:12px"><a class="ghost" href="${esc(x.link)}" target="_blank" rel="noopener">Instagram</a><button class="btn-dark" onclick="openIG('${x.id}')">See details ${ICON.right}</button></div></article>`}
+function openIG(id){cur.list=igRows();cur.i=Math.max(0,cur.list.findIndex(x=>x.id===id));cur.tab='details';document.querySelectorAll('.media video').forEach(v=>v.pause());drawD();if(!$('#dlg').open)$('#dlg').showModal()}
+function igTab(x){if(cur.tab==='transcript')return x.transcript?`<div class="sec"><h3>Voiceover${x.lang&&x.lang!=='en'?' ('+esc(LANG[x.lang]||x.lang)+')':''} · Whisper large-v3</h3><p class="tp">${esc(x.transcript)}</p></div>`:'<p class="tp" style="color:var(--muted)">No speech in this reel (music / text only).</p>';
+  if(cur.tab==='copy')return `<div class="sec"><h3>Caption</h3><p>${esc(x.caption||'—')}</p></div>`;
+  return `<div class="box"><h4>Instagram numbers (raw)</h4>${kv('pulse','Views / plays',x.views==null?'—':x.views.toLocaleString('en-IN'))}${kv('pulse','Likes',x.likesHidden?'Hidden by creator':x.likes==null?'—':x.likes.toLocaleString('en-IN'))}${kv('pulse','Comments',x.comments==null?'—':x.comments.toLocaleString('en-IN'))}${kv('pulse','Like-to-view',x.l2v==null?'—':x.l2v+'%')}${kv('pulse','Engagement rate',x.er==null?'—':x.er+'%')}</div>
+  <div class="box"><h4>Creator</h4>${kv('user','Handle','@'+esc(x.creator))}${kv('user','Followers',x.followers==null?'—':x.followers.toLocaleString('en-IN')+' · '+esc(x.tier))}${kv('reuse','Collab type',esc(x.collab))}${kv('cal','Posted',esc(x.date))}${kv('fmt','Format',esc(x.fmt)+(x.cards.length>1?' · '+x.cards.length+' slides':'')+(x.length?' · '+x.length+'s':''))}${kv('ext','Post',`<a href="${esc(x.link)}" target="_blank" rel="noopener">${esc(x.link.replace(/^https?:\/\/(www\.)?/,''))}</a>`)}</div>
+  <p style="color:var(--muted);font-size:11px">ER = (likes + comments) / followers. Like-to-view = likes / views. Numbers as of 13 Oct 2026.</p>`}
+function renderIG(){const a=IGD(),r=igRows(),sum=(f)=>a.reduce((s,x)=>s+(x[f]||0),0),med=v=>{v=v.filter(n=>n!=null).sort((p,q)=>p-q);return v.length?v[v.length>>1]:null};
+  $('#title').textContent=`${state.brand} · Instagram creator reels`;$('#insights').innerHTML='';
+  $('#kpis').innerHTML=[[a.length,'Creator posts (1 Apr – 13 Oct)'],[new Set(a.map(x=>x.creator)).size,'Creators'],[nf(sum('views')),'Total views'],[(med(a.map(x=>x.er))??'—')+'%','Median engagement rate']].map(([b,t])=>`<div class="kpi"><b>${b}</b><span>${t}</span></div>`).join('');
+  const cnt=f=>{const m={};a.forEach(x=>{const k=f(x);if(k)m[k]=(m[k]||0)+1});return Object.entries(m)};const TO=['Nano','Micro','Mid-tier','Macro','Mega'];
+  const chips=(lbl,key,opts)=>`<div class="hookbar" style="margin:0 0 10px"><span class="lbl">${lbl}</span><button class="chip-f ${!state[key]?'on':''}" onclick="setF('${key}',null)">All <b>${a.length}</b></button>`+opts.map(([v,n])=>`<button class="chip-f ${state[key]===v?'on':''}" onclick="setF('${key}','${esc(v)}')">${esc(KIND[v]||v)} <b>${n}</b></button>`).join('')+'</div>';
+  $('#hookbar').innerHTML=chips('Collab','collab',cnt(x=>x.collab).sort((p,q)=>q[1]-p[1]))+chips('Creator size','tier',cnt(x=>x.tier).sort((p,q)=>TO.indexOf(p[0])-TO.indexOf(q[0])))+chips('Format','kind',cnt(x=>x.missing?null:x.kind));
+  const fl=[state.collab,state.tier&&state.tier+' creators',state.kind&&KIND[state.kind]].filter(Boolean).join(' · ');
+  $('#grid').innerHTML=(fl?`<div class="hookline" style="grid-column:1/-1"><span>Showing <b>${r.length}</b> posts: ${esc(fl)}</span><button onclick="state.collab=state.tier=state.kind=null;render()">Clear ✕</button></div>`:'')+(r.length?r.map(igCard).join(''):'<div class="empty">No posts match.</div>')}
+function render(){modebar();if(state.mode==='ig')return renderIG();kpis();insights();hookbar();const a=rows();const fl=[state.partner&&`type <b>${state.partner==='creator'?'creator partnership':'brand ad'}</b>`,state.kind&&`format <b>${KIND[state.kind]}</b>`,state.hook&&`${isMix(state.brand)?'angle':'hook'} <b>${esc(state.hook)}</b>`,state.lang&&`language <b>${esc(state.lang)}</b>`].filter(Boolean).join(' and ');$('#grid').innerHTML=(fl?`<div class="hookline" style="grid-column:1/-1"><span>Showing <b>${a.length}</b> creative${a.length===1?'':'s'} with the ${fl}</span><button onclick="state.hook=null;state.lang=null;state.kind=null;state.partner=null;render()">Clear ✕</button></div>`:'')+(a.length?a.map(card).join(''):'<div class="empty">No ads match.</div>')}
 $('#q').oninput=e=>{state.q=e.target.value;render()};
 const ALL_SORTS=[['new','Newest first'],['long','Longest running'],['copies','Most ads using the video'],['spend','Highest est. spend'],['length','Longest video'],['az','Creator A–Z'],['za','Creator Z–A']];
 const sortsFor=b=>ALL_SORTS.filter(([k])=>k!=='spend'||window.ADS[b].some(x=>x.spend));
-const drawSort=()=>{if(!sortsFor(state.brand).some(o=>o[0]===state.sort))state.sort='new';dropdown($('#sortDD'),'Sort',sortsFor(state.brand),()=>state.sort,v=>{state.sort=v;render()})};
+const IG_SORTS=[['views','Most views'],['likes','Most likes'],['comments','Most comments'],['er','Highest engagement rate'],['l2v','Highest like-to-view'],['followers','Biggest creators'],['new','Newest first']];
+const drawSort=()=>{if(state.mode==='ig')return dropdown($('#sortDD'),'Sort',IG_SORTS,()=>state.igsort,v=>{state.igsort=v;render()});if(!sortsFor(state.brand).some(o=>o[0]===state.sort))state.sort='new';dropdown($('#sortDD'),'Sort',sortsFor(state.brand),()=>state.sort,v=>{state.sort=v;render()})};
 function dropdown(el,label,opts,get,set){
   const draw=()=>{const cur=opts.find(o=>o[0]===get());el.innerHTML=`<button class="ddb" aria-haspopup="listbox" aria-expanded="false"><span style="flex:1;min-width:0"><small>${label}</small><b>${esc(cur[1])}</b></span><svg width="12" height="8" viewBox="0 0 12 8"><path d="M1 1l5 5 5-5" fill="none" stroke="currentColor" stroke-width="2"/></svg></button>
     <ul class="ddm" role="listbox">${opts.map(([v,t,sub])=>`<li role="option" data-v="${v}" aria-selected="${v===get()}"><span>${esc(t)}${sub?`<em>${esc(sub)}</em>`:''}</span>${v===get()?'<i>✓</i>':''}</li>`).join('')}</ul>`;
@@ -475,7 +516,7 @@ function dropdown(el,label,opts,get,set){
 }
 document.addEventListener('click',()=>document.querySelectorAll('.dd.open').forEach(d=>d.classList.remove('open')));
 document.addEventListener('keydown',e=>{if(e.key==='Escape')document.querySelectorAll('.dd.open').forEach(d=>d.classList.remove('open'))});
-dropdown($('#brandDD'),'Brand',brands.map(b=>[b,b,`${window.ADS[b].length} creatives · ${window.ADS[b].reduce((s,x)=>s+(x.nads||1),0)} ads`]),()=>state.brand,v=>{state.brand=v;state.hook=null;state.lang=null;state.kind=null;state.partner=null;try{localStorage.setItem('brand',v)}catch(_){};drawSort();render()});
+dropdown($('#brandDD'),'Brand',brands.map(b=>[b,b,`${window.ADS[b].length} creatives · ${window.ADS[b].reduce((s,x)=>s+(x.nads||1),0)} ads`]),()=>state.brand,v=>{state.brand=v;state.hook=null;state.lang=null;state.kind=null;state.partner=null;state.collab=null;state.tier=null;if(!hasIG(v))state.mode='ads';try{localStorage.setItem('brand',v)}catch(_){};drawSort();render()});
 drawSort();
 $('#theme').onclick=()=>{const r=document.documentElement,dark=r.dataset.theme==='dark';r.dataset.theme=dark?'light':'dark';try{localStorage.setItem('theme',r.dataset.theme)}catch(_){}};
 render();
