@@ -12,7 +12,7 @@ try{const t=localStorage.getItem('theme');if(t)document.documentElement.dataset.
 const TABS=['Overview','Research','Cross-brand data',...P.brands.map(b=>b.name)];
 if(!TABS.includes(st.tab))st.tab='Overview';
 function save(){try{localStorage.setItem('regional-st',JSON.stringify({tab:st.tab,view:st.view}))}catch(e){}}
-async function load(name){if(!CACHE[name])CACHE[name]=fetch(`regional-data/${name}.json`).then(r=>{if(!r.ok)throw new Error(r.status);return r.json()});return CACHE[name]}
+async function load(name){if(!CACHE[name])CACHE[name]=fetch(`regional-data/${name}.json?v=20261110b`).then(r=>{if(!r.ok)throw new Error(r.status);return r.json()});return CACHE[name]}
 
 function bars(list){const t=Math.max(...list.map(x=>x.value),1);
   return list.length?`<div class="bars">${list.map(x=>`<div><em><span>${esc(x.name)}</span><span>${nf(x.value)}</span></em><s><u style="width:${Math.round(100*x.value/t)}%"></u></s></div>`).join('')}</div>`:'<p>No data.</p>'}
@@ -124,9 +124,9 @@ function creatorsView(b,D){const C=D.creators,P_=D.posts,tot=k=>C.reduce((s,x)=>
 
 function gTable(t){return t&&t.rows.length?`<div class="scroll"><table class="tbl"><thead><tr>${t.cols.map(c=>`<th>${esc(c)}</th>`).join('')}</tr></thead><tbody>${t.rows.map(r=>`<tr>${r.map(v=>`<td class="${typeof v==='number'?'n':''}">${typeof v==='number'?nf(v):esc(v??'–')}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`:'<p class="sub">No data.</p>'}
 function googleView(b,D){const O=D.g_overview,s=slug(b.name);
-  const mo=D.g_month.rows.length?D.g_month.cols.slice(1).map((c,i)=>[c,D.g_month.rows.reduce((t,r)=>t+(r[i+1]||0),0)]):[];
-  const lang=D.g_lang.rows.length?D.g_lang.cols.slice(1).map((c,i)=>({name:c,value:D.g_lang.rows.reduce((t,r)=>t+(r[i+1]||0),0)})).filter(x=>x.value).sort((a,b)=>b.value-a.value):[];
-  const mix=D.g_mix.rows.length?D.g_mix.cols.slice(1,-1).map((c,i)=>({name:c,value:D.g_mix.rows.reduce((t,r)=>t+(r[i+1]||0),0)})).filter(x=>x.value).sort((a,b)=>b.value-a.value):[];
+  const mo=D.g_month.rows.length?D.g_month.cols.slice(1).map((c,i)=>[c,D.g_month.rows.reduce((t,r)=>t+(+r[i+1]||0),0)]):[];
+  const lang=D.g_lang.rows.length?D.g_lang.cols.slice(1).map((c,i)=>({name:c,value:D.g_lang.rows.reduce((t,r)=>t+(+r[i+1]||0),0)})).filter(x=>x.value).sort((a,b)=>b.value-a.value):[];
+  const mix=D.g_mix.rows.length?D.g_mix.cols.slice(1,-1).map((c,i)=>({name:c,value:D.g_mix.rows.reduce((t,r)=>t+(+r[i+1]||0),0)})).filter(x=>x.value).sort((a,b)=>b.value-a.value):[];
   return sec('Google Ads Transparency overview','Searched by the brand\'s website, so agency-run ads are included.',gTable(O))+
    `<div class="rg2" style="margin-bottom:28px"><div class="rc"><h3>Ad type mix (all ads)</h3>${bars(mix)}</div><div class="rc"><h3>YouTube ads by spoken language</h3>${bars(lang)}</div>
     <div class="rc" style="grid-column:1/-1"><h3>New Google ads per month</h3>${mo.length?vbars(mo):'<p>No data.</p>'}</div></div>`+

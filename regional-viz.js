@@ -109,7 +109,7 @@ crossView=async function(){const C=await load('cross'),M=C.meta_matrix;
 summary=function(b,D){const s=b.stats,F=b.fields,ex=b.examples.filter(e=>st.lang==='All'||e.language===st.lang);
   const m=D.meta,mi=c=>m.cols.indexOf(c);const p=D.posts,pi=c=>p.cols.indexOf(c);
   const verd=countBy(p.rows,pi('Boost Verdict')).map(x=>({...x,color:VERD_C[x.name]}));
-  const gm=D.g_month.rows.length?D.g_month.cols.slice(1).map((c,i)=>[c.slice(2),D.g_month.rows.reduce((t,r)=>t+(r[i+1]||0),0)]):[];
+  const gm=D.g_month.rows.length?D.g_month.cols.slice(1).map((c,i)=>[c.slice(2),D.g_month.rows.reduce((t,r)=>t+(+r[i+1]||0),0)]):[];
   const c=BRAND_C[b.name];
   return `<div class="kg">${big(nf(s.meta),'Meta ads',{go:"setView('instagram','ads')",sub:nf(s.meta_tt)+' in Tamil/Telugu'})}${big(nf(s.google),'Google ads',{go:"setView('google')",sub:nf(s.google_live)+' live now'})}${big(s.yt_tamil+' / '+s.yt_telugu,'YouTube ads Tamil / Telugu',{go:"setView('youtube')"})}${big(nf(D.creators.length),'Instagram creators',{go:"setView('instagram','creators')",sub:nf(s.ig_posts)+' posts · '+s.ig_boosted+' boosted'})}</div>
   <div class="tk" style="--bc:${c}"><div><span>Signature line</span><p class="sig">${esc(F.signature)}</p></div><div><span>So what for us</span><p>${esc(F.sowhat)}</p></div></div>
@@ -163,9 +163,9 @@ creatorsView=function(b,D){const C=D.creators,p=D.posts,pi=c=>p.cols.indexOf(c),
 /* ---------- brand: google ---------- */
 const _googleTables=googleView;
 googleView=function(b,D){const c=BRAND_C[b.name];
-  const mix=D.g_mix.rows.length?D.g_mix.cols.slice(1,-1).map((k,i)=>({name:k,value:D.g_mix.rows.reduce((t,r)=>t+(r[i+1]||0),0)})).filter(x=>x.value):[];
-  const lang=D.g_lang.rows.length?D.g_lang.cols.slice(1).map((k,i)=>({name:k,value:D.g_lang.rows.reduce((t,r)=>t+(r[i+1]||0),0)})).filter(x=>x.value).sort((a,b)=>b.value-a.value):[];
-  const gm=D.g_month.rows.length?D.g_month.cols.slice(1).map((k,i)=>[k.slice(2),D.g_month.rows.reduce((t,r)=>t+(r[i+1]||0),0)]):[];
+  const mix=D.g_mix.rows.length?D.g_mix.cols.slice(1,-1).map((k,i)=>({name:k,value:D.g_mix.rows.reduce((t,r)=>t+(+r[i+1]||0),0)})).filter(x=>x.value):[];
+  const lang=D.g_lang.rows.length?D.g_lang.cols.slice(1).map((k,i)=>({name:k,value:D.g_lang.rows.reduce((t,r)=>t+(+r[i+1]||0),0)})).filter(x=>x.value).sort((a,b)=>b.value-a.value):[];
+  const gm=D.g_month.rows.length?D.g_month.cols.slice(1).map((k,i)=>[k.slice(2),D.g_month.rows.reduce((t,r)=>t+(+r[i+1]||0),0)]):[];
   const th=D.g_themes.rows.length?D.g_themes.cols.slice(1).map((k,i)=>({name:k,value:Math.max(...D.g_themes.rows.map(r=>r[i+1]||0))})).filter(x=>x.value).sort((a,b)=>b.value-a.value):[];
   const ag=D.g_agencies,ai=k=>ag.cols.indexOf(k);const agl=ag.rows.map(r=>({name:r[ai('Paid by')],value:r[ai('Ads')]})).sort((a,b)=>b.value-a.value);
   const yt=D.yt,yi=k=>yt.cols.indexOf(k);const topv=yt.rows.slice(0,8).map(r=>({name:(r[yi('YouTube title')]||'').slice(0,60),value:r[yi('Views')]||0}));
@@ -219,10 +219,10 @@ function youtubeView(b,D){const c=BRAND_C[b.name],y=D.yt,yi=k=>y.cols.indexOf(k)
 
 function googleOnlyView(b,D){const c=BRAND_C[b.name];
   const notYT=k=>!/YouTube|Video/i.test(k);
-  const mix=D.g_mix.rows.length?D.g_mix.cols.slice(1,-1).map((k,i)=>({name:k,value:D.g_mix.rows.reduce((t,r)=>t+(r[i+1]||0),0)})).filter(x=>x.value&&notYT(x.name)):[];
+  const mix=D.g_mix.rows.length?D.g_mix.cols.slice(1,-1).map((k,i)=>({name:k,value:D.g_mix.rows.reduce((t,r)=>t+(+r[i+1]||0),0)})).filter(x=>x.value&&notYT(x.name)):[];
   const th=D.g_themes.rows.length?D.g_themes.cols.slice(1).map((k,i)=>({name:k,value:Math.max(...D.g_themes.rows.map(r=>r[i+1]||0))})).filter(x=>x.value).sort((a,b)=>b.value-a.value):[];
   const ag=D.g_agencies,ai=k=>ag.cols.indexOf(k);const agl=ag.rows.map(r=>({name:r[ai('Paid by')],value:r[ai('Ads')]})).sort((a,b)=>b.value-a.value);
-  const gm=D.g_month.rows.length?D.g_month.cols.slice(1).map((k,i)=>[k.slice(2),D.g_month.rows.reduce((t,r)=>t+(r[i+1]||0),0)]):[];
+  const gm=D.g_month.rows.length?D.g_month.cols.slice(1).map((k,i)=>[k.slice(2),D.g_month.rows.reduce((t,r)=>t+(+r[i+1]||0),0)]):[];
   const S=D.search,si=k=>S.cols.indexOf(k),topS=S.rows.slice(0,8).map(r=>({name:String(r[si('Ad text')]||'').slice(0,70),value:r[si('Creatives')]}));
   const M=D.maps,mi=k=>M.cols.indexOf(k),topM=M.rows.slice(0,10).map(r=>({name:String(r[mi('Store / location')]||'').slice(0,50),value:r[mi('Ads')]}));
   const s=slug(b.name);
