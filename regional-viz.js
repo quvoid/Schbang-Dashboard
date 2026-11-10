@@ -111,7 +111,7 @@ summary=function(b,D){const s=b.stats,F=b.fields,ex=b.examples.filter(e=>st.lang
   const verd=countBy(p.rows,pi('Boost Verdict')).map(x=>({...x,color:VERD_C[x.name]}));
   const gm=D.g_month.rows.length?D.g_month.cols.slice(1).map((c,i)=>[c.slice(2),D.g_month.rows.reduce((t,r)=>t+(r[i+1]||0),0)]):[];
   const c=BRAND_C[b.name];
-  return `<div class="kg">${big(nf(s.meta),'Meta ads',{go:"setView('meta')",sub:nf(s.meta_tt)+' in Tamil/Telugu'})}${big(nf(s.google),'Google ads',{go:"setView('google')",sub:nf(s.google_live)+' live now'})}${big(s.yt_tamil+' / '+s.yt_telugu,'YouTube ads Tamil / Telugu',{go:"setView('google')"})}${big(nf(D.creators.length),'Instagram creators',{go:"setView('creators')",sub:nf(s.ig_posts)+' posts · '+s.ig_boosted+' boosted'})}</div>
+  return `<div class="kg">${big(nf(s.meta),'Meta ads',{go:"setView('instagram','ads')",sub:nf(s.meta_tt)+' in Tamil/Telugu'})}${big(nf(s.google),'Google ads',{go:"setView('google')",sub:nf(s.google_live)+' live now'})}${big(s.yt_tamil+' / '+s.yt_telugu,'YouTube ads Tamil / Telugu',{go:"setView('youtube')"})}${big(nf(D.creators.length),'Instagram creators',{go:"setView('instagram','creators')",sub:nf(s.ig_posts)+' posts · '+s.ig_boosted+' boosted'})}</div>
   <div class="tk" style="--bc:${c}"><div><span>Signature line</span><p class="sig">${esc(F.signature)}</p></div><div><span>So what for us</span><p>${esc(F.sowhat)}</p></div></div>
   <div class="vg vg3">
     ${card('What they talk about',hbars(b.themes,{color:c}),'Meta ad themes')}
@@ -184,8 +184,65 @@ boostedView=function(b,D){const y=D.ya,i=k=>y.cols.indexOf(k),c=BRAND_C[b.name];
   ${card('Top campaigns by views',hbars(y.rows.slice(0,10).map(r=>({name:String(r[i('Campaign Title')]).slice(0,70),value:r[i('View Count')]||0})),{fmt:short,color:c}),'','wide')}
   ${sec('Benchmark & every campaign','',fold('benchmark and campaign list',_boostedTables(b,D)))}`};
 
+
+/* ---------- platform picker: Overview | Instagram & Facebook | YouTube | Google ---------- */
+const PLATS=[['summary','Overview','◎'],['instagram','Instagram & Facebook','◐'],['youtube','YouTube','▶'],['google','Google Search & Display','G']];
+const LEGACY={meta:['instagram','ads'],creators:['instagram','creators'],boosted:['youtube',null]};
+setView=function(v,sub){if(LEGACY[v]){[v,sub]=[LEGACY[v][0],sub||LEGACY[v][1]]}st.view=v;if(sub)st.sub=sub;save();render();const s=$('#subnav');if(s)s.scrollIntoView({behavior:'smooth',block:'start'})};
+go=function(t,view){st.tab=t;st.view='summary';st.lang='All';if(view){const l=LEGACY[view];st.view=l?l[0]:view;if(l&&l[1])st.sub=l[1]}save();render();window.scrollTo({top:0,behavior:'smooth'})};
+if(LEGACY[st.view]){const l=LEGACY[st.view];st.view=l[0];if(l[1])st.sub=l[1]}
+if(!PLATS.some(p=>p[0]===st.view))st.view='summary';
+subnav=function(b,D){const yi=k=>D.yt.cols.indexOf(k);
+  const cnt={instagram:D.meta.rows.length+D.posts.rows.length,youtube:D.yt.rows.length+D.ya.rows.length,google:D.search.rows.length+D.display.rows.length+D.maps.rows.length};
+  return `<div class="plat">${PLATS.map(([k,l,ic])=>`<button class="${st.view===k?'on':''}" onclick="setView('${k}')"><i>${ic}</i><span>${l}</span>${cnt[k]!=null?`<em>${nf(cnt[k])}</em>`:''}</button>`).join('')}</div>`};
+
+function instagramView(b,D){const sub=st.sub==='creators'?'creators':'ads';
+  const pick=`<div class="seg" style="margin:4px 0 6px">${[['ads',`Paid Meta ads (${nf(D.meta.rows.length)})`],['creators',`Creator collabs (${nf(D.creators.length)} creators)`]].map(([k,l])=>`<button class="${sub===k?'on':''}" onclick="st.sub='${k}';save();rerender()">${l}</button>`).join('')}</div>
+   <p class="vs" style="margin-bottom:0">${sub==='ads'?'Every ad in the Meta Ad Library (runs on Instagram and Facebook), including paid creator-partnership ads.':'Instagram posts the brand co-authored with creators, benchmarked against each creator\'s own reels, plus the transcripts of paid creator ads.'}</p>`;
+  return pick+(sub==='ads'?metaView(b,D):creatorsView(b,D))}
+
+function youtubeView(b,D){const c=BRAND_C[b.name],y=D.yt,yi=k=>y.cols.indexOf(k),R=y.rows,a=D.ya,ai=k=>a.cols.indexOf(k);
+  const tv=R.reduce((s,r)=>s+(r[yi('Views')]||0),0),live=R.filter(r=>/yes|true/i.test(String(r[yi('Live (≤7 days)')]))).length;
+  const lang=countBy(R,yi('Spoken language')).map(x=>({...x,name:x.name.replace(/—/g,'').trim()}));
+  const lenB=[[0,15,'≤15s'],[16,30,'16–30s'],[31,60,'31–60s'],[61,180,'1–3 min'],[181,1e9,'3 min+']].map(([lo,hi,l])=>[l,R.filter(r=>{const v=r[yi('Length (sec)')];return v!=null&&v>=lo&&v<=hi}).length]);
+  const mo={};R.forEach(r=>{const k=String(r[yi('First shown')]||'').slice(0,7);if(k)mo[k]=(mo[k]||0)+1});const mon=Object.entries(mo).sort().slice(-16).map(([k,v])=>[k.slice(2),v]);
+  const th=countBy(R,yi('Themes'),true).slice(0,8);
+  const ta=R.filter(r=>/Tamil|Telugu/.test(r[yi('Spoken language')]||'')).slice(0,8).map(r=>({name:`${r[yi('Spoken language')]} · ${String(r[yi('YouTube title')]||'').slice(0,55)}`,value:r[yi('Views')]||0}));
+  return `<div class="kg">${big(nf(R.length),'YouTube videos run as Google ads',{sub:nf(live)+' shown in the last 7 days'})}${big(short(tv),'YouTube views on those videos')}${big(b.stats.yt_tamil+' / '+b.stats.yt_telugu,'spoken in Tamil / Telugu')}${big(nf(a.rows.length),'boosted regional videos',{sub:'third-party audit'})}</div>
+  <div class="vg vg3">${card('Spoken language',donut(lang))}${card('Video length',columns(lenB,{color:c,h:120,every:1}))}${card('What the videos talk about',hbars(th,{color:c}))}</div>
+  ${card('Most-watched Tamil & Telugu video ads',hbars(ta,{fmt:short,color:c}),'','wide')}
+  ${card('New YouTube video ads per month',columns(mon,{color:c,every:1}),'By the month Google first showed the video as an ad.','wide')}
+  ${sec('Every YouTube video ad','Open a row for the transcript in the original language and in English.',table({id:'yt-'+slug(b.name),cols:y.cols,rows:R,
+     show:['YouTube title','Spoken language','Views','Length (sec)','Ad creatives using it','First shown','Last shown','Live (≤7 days)','Themes','YouTube URL'],num:['Views','Length (sec)','Ad creatives using it'],clip:['YouTube title','Themes'],link:'YouTube URL',filters:['Spoken language','Live (≤7 days)','Themes']}))}
+  <div class="divider"><span>Boosted regional videos · third-party audit</span></div>
+  ${boostedView(b,D)}`}
+
+function googleOnlyView(b,D){const c=BRAND_C[b.name];
+  const notYT=k=>!/YouTube|Video/i.test(k);
+  const mix=D.g_mix.rows.length?D.g_mix.cols.slice(1,-1).map((k,i)=>({name:k,value:D.g_mix.rows.reduce((t,r)=>t+(r[i+1]||0),0)})).filter(x=>x.value&&notYT(x.name)):[];
+  const th=D.g_themes.rows.length?D.g_themes.cols.slice(1).map((k,i)=>({name:k,value:Math.max(...D.g_themes.rows.map(r=>r[i+1]||0))})).filter(x=>x.value).sort((a,b)=>b.value-a.value):[];
+  const ag=D.g_agencies,ai=k=>ag.cols.indexOf(k);const agl=ag.rows.map(r=>({name:r[ai('Paid by')],value:r[ai('Ads')]})).sort((a,b)=>b.value-a.value);
+  const gm=D.g_month.rows.length?D.g_month.cols.slice(1).map((k,i)=>[k.slice(2),D.g_month.rows.reduce((t,r)=>t+(r[i+1]||0),0)]):[];
+  const S=D.search,si=k=>S.cols.indexOf(k),topS=S.rows.slice(0,8).map(r=>({name:String(r[si('Ad text')]||'').slice(0,70),value:r[si('Creatives')]}));
+  const M=D.maps,mi=k=>M.cols.indexOf(k),topM=M.rows.slice(0,10).map(r=>({name:String(r[mi('Store / location')]||'').slice(0,50),value:r[mi('Ads')]}));
+  const s=slug(b.name);
+  return `<div class="kg">${big(nf(mix.reduce((t,x)=>t+x.value,0)),'Google search, shopping, display & Maps ads')}${big(nf(S.rows.length),'unique search / shopping ads')}${big(nf(D.display.rows.length),'unique display banners')}${big(nf(M.rows.length),'stores promoted on Maps')}</div>
+  <div class="vg vg3">${card('Ad type',donut(mix),'Excludes YouTube (see the YouTube tab).')}${card('Who pays',donut(agl),'Google "Paid by" (all Google ads)')}${card('Themes, % of ads',hbars(th.slice(0,8),{fmt:v=>v+'%',color:c}))}</div>
+  ${card('New Google ads per month',columns(gm,{color:c}),'All Google formats, including YouTube.','wide')}
+  <div class="vg vg2">${card('Most-used search ad texts',hbars(topS,{color:c}),'Number of Google creatives using the exact text.')}${card('Stores promoted on Google Maps',topM.length?hbars(topM,{color:c}):'<p class="vs">No Maps ads.</p>')}</div>
+  ${sec('Every search & shopping ad','Deduplicated by ad text.',table({id:'se-'+s,cols:S.cols,rows:S.rows,show:['Ad text','Creatives','Type','Themes','First shown','Last shown','Live creatives','Paid by'],num:['Creatives','Live creatives'],clip:['Ad text','Themes'],filters:['Type','Themes','Paid by']}))}
+  ${sec('Every display banner','Text read from the banner, deduplicated.',table({id:'di-'+s,cols:D.display.cols,rows:D.display.rows,show:['Ad text','Creatives','Themes','First shown','Last shown','Text quality','Transparency link'],num:['Creatives'],clip:['Ad text','Themes'],link:'Transparency link',filters:['Themes','Text quality']}))}
+  ${sec('Every Maps / local store ad','',table({id:'mp-'+s,cols:M.cols,rows:M.rows,show:['Store / location','Ads','First shown','Last shown','Ad text'],num:['Ads'],clip:['Ad text']}))}
+  ${sec('Google overview & raw tables','',fold('Google tables',gTable(D.g_overview)+'<br>'+gTable(D.g_themes)+'<br>'+gTable(D.g_agencies)))}`}
+
+brandView=async function(b,tok){const D=await load(slug(b.name));if(tok!==RTOK)return null;
+  $('#title').textContent=b.name;$('#sub').textContent=b.approach+' · '+b.message;
+  $('#subnav').innerHTML=subnav(b,D);
+  return ({summary,instagram:instagramView,youtube:youtubeView,google:googleOnlyView}[st.view]||summary)(b,D)};
+
 /* ---------- render (overview is async now) ---------- */
-render=async function(keep){const tok=++RTOK;
+render=async function(keep){try{localStorage.setItem('regional-st',JSON.stringify({tab:st.tab,view:st.view,sub:st.sub}))}catch(e){}
+  const tok=++RTOK;
   $('#btabs').innerHTML=TABS.map(t=>`<button class="${st.tab===t?'on':''}" onclick="go('${esc(t)}')" ${BRAND_C[t]?`style="--bc:${BRAND_C[t]}"`:''}>${BRAND_C[t]?'<i class="bd"></i>':''}${esc(t)}</button>`).join('');
   $('#subnav').innerHTML='';if(!keep)$('#body').innerHTML='<div class="loading">Loading…</div>';
   try{const html=st.tab==='Overview'?await overview():st.tab==='Research'?await research():st.tab==='Cross-brand data'?await crossView():await brandView(P.brands.find(b=>b.name===st.tab),tok);

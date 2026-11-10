@@ -333,6 +333,14 @@ svg.ln{width:100%;height:auto;display:block}.ln .gl{stroke:var(--line);stroke-wi
 .btabs .bd{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--bc);margin-right:7px;vertical-align:middle}
 @media (max-width:1024px){.vg3,.bg{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media (max-width:720px){.vg2,.vg3,.bg,.ig,.tk{grid-template-columns:1fr}.rsc{grid-template-columns:1fr}.str{grid-template-columns:80px 1fr 40px}}
+.plat{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:22px 0 8px}
+.plat button{display:flex;align-items:center;gap:10px;border:1px solid var(--line);background:var(--panel);color:var(--ink-2);border-radius:16px;padding:14px 16px;font:600 14px Sora;cursor:pointer;text-align:left;transition:transform .15s}
+.plat button:hover{transform:translateY(-1px)}.plat button i{font-style:normal;width:30px;height:30px;border-radius:9px;display:grid;place-items:center;background:var(--sand-2);font-size:14px;flex:none}
+.plat button span{flex:1}.plat button em{font-style:normal;font-weight:500;font-size:12px;color:var(--muted)}
+.plat button.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}.plat button.on i{background:var(--grad);color:#121212}.plat button.on em{color:var(--bg);opacity:.7}
+.donut{flex-wrap:nowrap}.donut svg{width:min(150px,42%);height:auto}.lg{min-width:0!important}.lg b{flex:none}
+.divider{display:flex;align-items:center;gap:12px;margin:34px 0 4px;color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.08em;font-weight:600}.divider:before,.divider:after{content:"";flex:1;height:1px;background:var(--line)}
+@media (max-width:720px){.plat{grid-template-columns:repeat(2,1fr)}}
 </style>
 </head>
 <body>
@@ -356,6 +364,6 @@ svg.ln{width:100%;height:auto;display:block}.ln .gl{stroke:var(--line);stroke-wi
 </main>
 <script src="regional.js?v=202611091800"></script>
 <script src="regional-app.js?v=202611101200"></script>
-<script src="regional-viz.js?v=202611101215"></script>
+<script src="regional-viz.js?v=202611101310"></script>
 </body>
 </html>
