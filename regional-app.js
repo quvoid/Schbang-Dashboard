@@ -161,4 +161,4 @@ async function render(keep){const tok=++RTOK;
     $('#body').innerHTML=html;
   }catch(e){$('#body').innerHTML=`<div class="loading">Could not load data (${esc(e.message)}).</div>`}}
 $('#theme').onclick=()=>{const r=document.documentElement,dark=r.dataset.theme==='dark';r.dataset.theme=dark?'light':'dark';try{localStorage.setItem('theme',r.dataset.theme)}catch(_){}};
-render();
+
