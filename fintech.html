@@ -1,0 +1,368 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fintech Meta Ads</title>
+<meta name="description" content="Every Meta Ad Library ad from Navi, Jupiter, Jio Finance, True Balance, Jumpp and Shoonya: what they say, in which language, and how long they run.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script>try{const t=localStorage.getItem('theme');if(t)document.documentElement.dataset.theme=t}catch(_){}</script>
+<style>
+:root{
+  --bg:#ffffff; --ink:#121212; --ink-2:#333333; --muted:#838383; --line:#e8e8e8;
+  --sand:#dfdad5; --sand-2:#f4f1ee; --panel:#ffffff;
+  --orange:#f2552c; --pink:#f0a6d8; --cyan:#45c4dc; --yellow:#f3e33a;
+  --live:#1f9d55; --radius:18px; --grey:#c9c4be;
+  --grad:linear-gradient(90deg,#a7a39d 0%,#f2552c 30%,#f0a6d8 62%,#f3e33a 100%);
+}
+:root[data-theme="dark"]{
+  --bg:#0f0f0f; --ink:#f5f3f0; --ink-2:#d9d6d2; --muted:#9a968f; --line:#2a2a2a;
+  --sand:#3a3632; --sand-2:#1b1a19; --panel:#161616; --grey:#4a4641;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:Sora,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:inherit}
+.wrap{max-width:1240px;margin:0 auto;padding:0 16px}
+header{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--bg) 92%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.bar{display:flex;align-items:center;gap:16px;height:68px}
+.logo{font-weight:700;font-size:20px;letter-spacing:-.02em;text-decoration:none}
+.logo .x{font-style:normal;color:var(--muted);font-weight:400;margin:0 8px}.logo span{display:inline-block;width:42px;height:10px;border-radius:6px;background:var(--grad);margin-left:8px;vertical-align:middle}
+.bar .sp{flex:1}
+.pill{border:1px solid var(--line);border-radius:999px;padding:9px 16px;font:500 14px Sora;background:var(--panel);color:var(--ink);cursor:pointer;text-decoration:none}
+.dd{position:relative}
+.ddb{display:flex;align-items:center;gap:10px;border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:14px;padding:8px 14px;cursor:pointer;font-family:Sora;min-width:190px;text-align:left}
+.ddb:hover,.dd.open .ddb{border-color:var(--ink)}
+.ddb small{display:block;font-size:10.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;line-height:1.2}
+.ddb b{display:block;font-size:14px;font-weight:600;white-space:nowrap}
+.ddb svg{color:var(--muted);flex:none}
+.ddm{position:absolute;right:0;top:calc(100% + 8px);min-width:100%;width:max-content;max-width:300px;list-style:none;margin:0;padding:6px;background:var(--panel);border:1px solid var(--line);border-radius:16px;box-shadow:0 18px 40px rgba(0,0,0,.12);z-index:40;opacity:0;transform:translateY(-4px);pointer-events:none;transition:opacity .15s,transform .15s}
+.dd.open .ddm{opacity:1;transform:none;pointer-events:auto}
+.ddm li{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:10px 12px;border-radius:10px;cursor:pointer;font-size:14px}
+.ddm li:hover{background:var(--sand-2)}
+.ddm li[aria-selected="true"]{font-weight:600}
+.ddm li em{display:block;font-style:normal;font-size:12px;color:var(--muted);font-weight:400;margin-top:2px}
+.ddm li i{font-style:normal;color:var(--orange);font-weight:700}
+.hero{padding:36px 0 20px}
+.hero small{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.hero h1{font-size:clamp(28px,4.4vw,46px);line-height:1.08;letter-spacing:-.03em;margin:6px 0 10px;font-weight:600}
+.hero p{color:var(--muted);margin:0;font-size:15px;max-width:760px;line-height:1.55}
+.modes{display:inline-flex;gap:4px;margin-top:18px;padding:4px;border:1px solid var(--line);border-radius:999px}
+.modes button{border:0;background:none;color:var(--muted);font:500 14px Sora;padding:8px 16px;border-radius:999px;cursor:pointer}
+.modes button.on{background:var(--ink);color:var(--bg)}
+.ticker{margin-top:20px;height:6px;border-radius:6px;background:var(--grad)}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:22px 0}
+.kpi{background:var(--sand-2);border-radius:var(--radius);padding:18px 20px}
+.kpi b{display:block;font-size:30px;font-weight:600;letter-spacing:-.02em}
+.kpi span{color:var(--muted);font-size:13px}
+.lead{background:var(--ink);color:var(--bg);border-radius:var(--radius);padding:22px 24px;margin:0 0 26px}
+.lead small{font-size:11px;letter-spacing:.1em;text-transform:uppercase;opacity:.6;font-weight:600}
+.lead h2{margin:6px 0 10px;font-size:clamp(18px,2.2vw,23px);line-height:1.35;font-weight:600;letter-spacing:-.01em}
+.lead ul{margin:0;padding-left:18px;display:grid;gap:6px;font-size:14px;line-height:1.55;opacity:.88}
+.sec{margin:0 0 30px}
+.sec h3{margin:0 0 4px;font-size:20px;font-weight:600;letter-spacing:-.01em}
+.sec>p{margin:0 0 14px;color:var(--muted);font-size:13.5px;line-height:1.5;max-width:780px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:18px 20px;min-width:0}
+.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px}
+.two>*,.sec,.card{min-width:0}
+.scroll{overflow-x:auto}
+/* bars */
+.bars{display:grid;gap:8px}
+.br{display:grid;grid-template-columns:minmax(96px,170px) minmax(0,1fr) auto;gap:12px;align-items:center;font-size:13px}
+.br .l{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--ink-2)}
+.br s{display:block;height:14px;background:var(--sand-2);border-radius:3px;overflow:hidden;text-decoration:none}
+.br u{display:block;height:100%;background:var(--grey)}
+.br.hi u{background:var(--orange)}
+.br.hi .l{color:var(--ink);font-weight:600}
+.br em{font-style:normal;font-variant-numeric:tabular-nums;color:var(--muted);min-width:70px;text-align:right}
+.br.clk{cursor:pointer}.br.clk:hover .l{text-decoration:underline}
+/* share grid */
+table.grid{border-collapse:collapse;width:100%;font-size:12.5px}
+table.grid th{font-weight:500;color:var(--muted);text-align:center;padding:6px 4px;font-size:11.5px;vertical-align:bottom;line-height:1.25}
+table.grid th:first-child,table.grid td:first-child{text-align:left;white-space:nowrap;padding-right:12px;color:var(--ink);font-weight:500;position:sticky;left:0;background:var(--panel)}
+table.grid td{padding:3px;text-align:center}
+table.grid td button{width:100%;min-width:52px;height:38px;border:0;border-radius:6px;font:600 12.5px Sora;cursor:pointer;font-variant-numeric:tabular-nums}
+table.grid td button.z{cursor:default;background:transparent!important;color:var(--muted);font-weight:400}
+/* weekly columns */
+.weeks{display:grid;gap:10px}
+.wk{display:grid;grid-template-columns:minmax(96px,150px) minmax(0,1fr) 60px;gap:12px;align-items:end;font-size:13px}
+.wk .cols{display:grid;grid-template-columns:repeat(var(--n),minmax(0,1fr));gap:2px;height:46px;align-items:end;border-bottom:1px solid var(--line)}
+.wk .cols i{display:block;background:var(--orange);border-radius:2px 2px 0 0;min-height:1px}
+.wk .cols i.z{background:transparent}
+.wk em{font-style:normal;color:var(--muted);font-variant-numeric:tabular-nums;text-align:right}
+.wkax{display:grid;grid-template-columns:minmax(96px,150px) minmax(0,1fr) 60px;gap:12px;font-size:11px;color:var(--muted)}
+.wkax span:nth-child(2){display:flex;justify-content:space-between}
+.note{font-size:12px;color:var(--muted);margin:10px 0 0;line-height:1.5}
+/* openings */
+.quotes{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,320px),1fr));gap:12px}
+.q{background:var(--sand-2);border-radius:14px;padding:14px 16px;font-size:14px;line-height:1.5;cursor:pointer;border:0;text-align:left;color:var(--ink);font-family:Sora}
+.q small{display:block;color:var(--muted);font-size:11.5px;margin-top:6px}
+/* gallery */
+.tools{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:0 0 14px}
+.search{flex:1 1 260px;display:flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:14px;padding:10px 14px;background:var(--panel)}
+.search input{border:0;outline:0;background:none;color:var(--ink);font:400 14px Sora;width:100%}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 16px}
+.chip{border:1px solid var(--line);background:var(--panel);color:var(--ink-2);border-radius:10px;padding:6px 11px;font:500 12.5px Sora;cursor:pointer}
+.chip.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.chip b{font-weight:600;margin-left:4px;opacity:.6}
+.gal{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.ad{background:var(--panel);border:1px solid var(--line);border-radius:16px;overflow:hidden;cursor:pointer;display:flex;flex-direction:column;text-align:left;padding:0;color:var(--ink);font-family:Sora}
+.ad:hover{border-color:var(--ink)}
+.ad .th{position:relative;aspect-ratio:1/1;background:var(--sand-2);overflow:hidden}
+.ad .th img{width:100%;height:100%;object-fit:cover;display:block}
+.ad .th .play{position:absolute;left:10px;bottom:10px;background:rgba(0,0,0,.65);color:#fff;font-size:11px;padding:4px 8px;border-radius:6px}
+.ad .th .n{position:absolute;right:10px;top:10px;background:rgba(0,0,0,.65);color:#fff;font-size:11px;padding:4px 8px;border-radius:6px}
+.ad .bd{padding:12px 14px;display:grid;gap:6px;font-size:12.5px}
+.ad .meta{display:flex;gap:8px;color:var(--muted);font-size:11.5px;flex-wrap:wrap}
+.ad .meta .on{color:var(--live);font-weight:600}
+.ad .cap{color:var(--ink-2);line-height:1.45;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.ad .says{color:var(--ink);font-weight:500;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.more{display:block;margin:18px auto 0}
+dialog{border:0;border-radius:20px;padding:0;width:min(980px,96vw);max-height:92vh;background:var(--panel);color:var(--ink)}
+dialog::backdrop{background:rgba(0,0,0,.55)}
+.dlg{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:0;max-height:92vh}
+.dlg .media{background:var(--sand-2);padding:16px;display:grid;gap:10px;overflow:auto;align-content:start}
+.dlg .media img{width:100%;border-radius:10px;display:block}
+.dlg .info{padding:22px 24px;overflow:auto;display:grid;gap:14px;align-content:start;font-size:13.5px;line-height:1.55}
+.dlg h4{margin:0;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.dlg p{margin:4px 0 0;white-space:pre-wrap}
+.dlg .x{position:sticky;top:0;justify-self:end;border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:999px;width:36px;height:36px;cursor:pointer;font-size:16px}
+.dlg dl{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;margin:0;font-size:13px}
+.dlg dt{color:var(--muted)}.dlg dd{margin:0}
+.btn{display:inline-flex;align-items:center;gap:6px;background:var(--ink);color:var(--bg);border:0;border-radius:999px;padding:10px 16px;font:600 13.5px Sora;text-decoration:none;cursor:pointer;justify-self:start}
+footer{color:var(--muted);font-size:12px;padding:30px 0 50px;line-height:1.6}
+@media (max-width:1024px){.gal{grid-template-columns:repeat(3,minmax(0,1fr))}.kpis{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:760px){.two{grid-template-columns:1fr}.gal{grid-template-columns:repeat(2,minmax(0,1fr))}.dlg{grid-template-columns:1fr}.dlg .media{max-height:none}dialog{overflow:auto}}
+@media (max-width:620px){.bar{height:auto;padding:12px 0;flex-wrap:wrap}.hide-sm{display:none}.br{grid-template-columns:90px minmax(0,1fr) auto}.br em{min-width:56px}.wk,.wkax{grid-template-columns:80px minmax(0,1fr) 44px}.kpi b{font-size:24px}}
+@media (max-width:420px){.gal{grid-template-columns:1fr 1fr;gap:8px}.ad .bd{padding:10px}}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap bar">
+    <a class="logo" href="index.html"><b>Schbang</b><i class="x">×</i>Creator Ads <span></span></a>
+    <div class="sp"></div>
+    <div class="dd" id="brandDD"></div>
+    <a class="pill hide-sm" href="index.html">← D2C brands</a>
+    <button id="theme" class="pill" aria-label="Toggle dark mode">◐</button>
+  </div>
+</header>
+<main class="wrap" id="app"></main>
+<footer class="wrap">Source: Meta Ad Library, India, each brand's own Facebook pages, scanned 18 Nov 2026. The Library shows no spend, reach or results, so every number here is a count of ads or creatives. Videos were transcribed with Whisper and images read for their text; a few images carry machine-read text in the original script. Click any ad to open it in the Ad Library.</footer>
+<dialog id="dlg"></dialog>
+
+<script src="fintech-data.js?v=202611181600"></script>
+<script>
+const F = window.FIN, $ = (s) => document.querySelector(s);
+const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const nf = (n) => Number(n).toLocaleString('en-IN');
+const per100 = (a, b) => (b ? Math.round((100 * a) / b) : 0);
+const p100 = (a, b) => (a && b && (100 * a) / b < 0.5 ? '<1' : per100(a, b));
+const MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const dlong = (iso) => { if (!iso) return ''; const [y, m, d] = iso.split('-'); return `${+d} ${MON[+m - 1]} ${y}`; };
+const KINDS = ['Dynamic (DCO)', 'Video', 'Image', 'Carousel', 'Catalogue (DPA)'];
+const LANDS = ['Play Store', 'App Store', 'Website', 'Instagram / Facebook', 'No link'];
+const qs = new URLSearchParams(location.search);
+const state = { brand: F.brands.includes(qs.get('brand')) ? qs.get('brand') : 'all', mode: qs.get('mode') === 'ads' ? 'ads' : 'insights', q: '', msg: null, kind: null, live: false, shown: 48 };
+const save = () => { const p = new URLSearchParams(); if (state.brand !== 'all') p.set('brand', state.brand); if (state.mode === 'ads') p.set('mode', 'ads'); history.replaceState(null, '', p.toString() ? `?${p}` : location.pathname); };
+const adsOf = (b) => F.ads.filter((x) => b === 'all' || x.b === b);
+const shade = (v) => { // warm scale for shares 0..1
+  const t = Math.max(0, Math.min(1, v)); const a = 0.08 + 0.85 * t;
+  return `background:color-mix(in srgb,#E8590C ${Math.round(a * 100)}%,var(--panel));color:${t > 0.45 ? '#fff' : 'var(--ink)'}`;
+};
+
+function dropdown(el, label, opts, get, set) {
+  const draw = () => {
+    const cur = opts.find((o) => o[0] === get());
+    el.innerHTML = `<button class="ddb" aria-haspopup="listbox" aria-expanded="false"><span style="flex:1;min-width:0"><small>${label}</small><b>${esc(cur[1])}</b></span><svg width="12" height="8" viewBox="0 0 12 8"><path d="M1 1l5 5 5-5" fill="none" stroke="currentColor" stroke-width="2"/></svg></button>
+      <ul class="ddm" role="listbox">${opts.map(([v, t, sub]) => `<li role="option" data-v="${esc(v)}" aria-selected="${v === get()}"><span>${esc(t)}${sub ? `<em>${esc(sub)}</em>` : ''}</span>${v === get() ? '<i>✓</i>' : ''}</li>`).join('')}</ul>`;
+    el.querySelector('.ddb').onclick = (e) => { e.stopPropagation(); const open = !el.classList.contains('open'); document.querySelectorAll('.dd.open').forEach((d) => d.classList.remove('open')); el.classList.toggle('open', open); };
+    el.querySelectorAll('li').forEach((li) => (li.onclick = () => { set(li.dataset.v); el.classList.remove('open'); draw(); }));
+  };
+  draw();
+}
+document.addEventListener('click', () => document.querySelectorAll('.dd.open').forEach((d) => d.classList.remove('open')));
+
+function bars(rows, { fmt = (r) => nf(r.v), hi = () => false, onClick } = {}) {
+  const mx = Math.max(1, ...rows.map((r) => r.v));
+  return `<div class="bars">${rows.map((r, i) => `<div class="br${hi(r) ? ' hi' : ''}${onClick ? ' clk' : ''}" ${onClick ? `data-i="${i}"` : ''}><span class="l" title="${esc(r.l)}">${esc(r.l)}</span><s><u style="width:${Math.max(1.5, (100 * r.v) / mx)}%"></u></s><em>${fmt(r)}</em></div>`).join('')}</div>`;
+}
+function grid(rowsLabel, rows, cols, cell) { // share grid: rows × cols, each cell {v (0..1), text, on}
+  return `<div class="scroll"><table class="grid"><thead><tr><th>${rowsLabel}</th>${cols.map((c) => `<th>${esc(c)}</th>`).join('')}</tr></thead><tbody>${rows.map((r) => `<tr><td>${esc(r)}</td>${cols.map((c) => { const x = cell(r, c); return x.n ? `<td><button style="${shade(x.v)}" data-r="${esc(r)}" data-c="${esc(c)}" title="${esc(x.title || '')}">${x.text}</button></td>` : '<td><button class="z" disabled>–</button></td>'; }).join('')}</tr>`).join('')}</tbody></table></div>`;
+}
+function weeks(rowsData, n = 16) { // ads started per week, last n weeks
+  const end = new Date(`${F.asOf}T00:00:00Z`);
+  const idx = (iso) => Math.floor((end - new Date(`${iso}T00:00:00Z`)) / (7 * 864e5));
+  const mx = Math.max(1, ...rowsData.flatMap((r) => { const c = Array(n).fill(0); r.ads.forEach((x) => { const k = idx(x.start); if (k >= 0 && k < n) c[n - 1 - k]++; }); r.c = c; return c; }));
+  const start = new Date(end - (n - 1) * 7 * 864e5).toISOString().slice(0, 10);
+  return `<div class="weeks">${rowsData.map((r) => `<div class="wk"><span>${esc(r.l)}</span><span class="cols" style="--n:${n}">${r.c.map((v, i) => `<i class="${v ? '' : 'z'}" style="height:${(100 * v) / mx}%" title="${v} ads started in week ${i + 1}"></i>`).join('')}</span><em>${nf(r.c.reduce((a, b) => a + b, 0))}</em></div>`).join('')}
+    <div class="wkax"><span></span><span><span>${dlong(start).replace(/ \d{4}$/, '')}</span><span>${dlong(F.asOf).replace(/ \d{4}$/, '')}</span></span><span></span></div></div>`;
+}
+const typ = (arr) => { const a = [...arr].sort((x, y) => x - y); return a.length ? a[Math.floor(a.length / 2)] : 0; };
+const group = (list) => { // identical creatives (same picture and caption) shown once, with how many ads use them
+  const m = new Map(); list.forEach((x) => { const k = `${x.b}|${x.th[0]?.[0] || x.id}|${x.cap.slice(0, 80)}`; if (!m.has(k)) m.set(k, { ...x, n: 0, ids: [] }); const g = m.get(k); g.n++; g.ids.push(x); if (x.live) g.live = true; if (x.days > g.days) g.days = x.days; if (x.start && x.start < g.start) g.start = x.start; });
+  m.forEach((g) => g.ids.sort((a, b) => (a.start < b.start ? -1 : 1)));
+  return [...m.values()];
+};
+
+// ---------------- insights ----------------
+function kpis(list) {
+  const spoken = list.filter((x) => x.lang && !x.lang.startsWith('No speech'));
+  const hindi = spoken.filter((x) => x.lang === 'Hindi').length;
+  const d30 = list.filter((x) => (new Date(F.asOf) - new Date(x.start)) / 864e5 <= 30).length;
+  return `<section class="kpis">
+    <div class="kpi"><b>${nf(list.length)}</b><span>ads in the Ad Library</span></div>
+    <div class="kpi"><b>${nf(list.filter((x) => x.live).length)}</b><span>running now</span></div>
+    <div class="kpi"><b>${nf(d30)}</b><span>started in the last 30 days</span></div>
+    <div class="kpi"><b>${spoken.length ? per100(hindi, spoken.length) : 0} in 100</b><span>spoken ads are in Hindi (${nf(spoken.length)} with speech)</span></div></section>`;
+}
+
+function overview() {
+  const S = F.stats, B = F.brands;
+  const list = adsOf('all');
+  const lead = (() => { // the takeaways, counted from the rows
+    const tb = S['True Balance'], nv = S['Navi Money'], jf = S['Jio Finance'], ju = S['Jupiter'], jm = S['Jumpp'], sh = S['Shoonya'];
+    const spoken = list.filter((x) => x.lang && !x.lang.startsWith('No speech')), hindi = spoken.filter((x) => x.lang === 'Hindi').length;
+    const out = [];
+    if (tb) out.push(`<b>True Balance runs far more ads than anyone:</b> ${nf(tb.live)} live ads, ${per100(tb.live, B.reduce((a, b) => a + S[b].live, 0))} in every 100 running in this set. ${nf(tb.msgs['Personal loans'] || 0)} of its ${nf(tb.ads)} ads sell loans, most of them on speed (“instant”, “quick”), and a typical live ad has run ${typ(tb.live_days)} days.`);
+    if (nv) out.push(`<b>Navi sells UPI with daily cashback:</b> ${nf(nv.msgs['UPI & payments'] || 0)} of ${nf(nv.ads)} ads. ${nf(nv.new30)} started in the last 30 days, almost all dynamic (DCO) ads that send people to the Play Store.`);
+    if (jf) out.push(`<b>Jio Finance only arrived on Meta on ${dlong(jf.first)}:</b> ${nf(jf.ads)} ads since, all live, leading on rewards (${nf(jf.msgs['Rewards & cashback'] || 0)}), loans (${nf(jf.msgs['Personal loans'] || 0)}) and its credit card (${nf(jf.msgs['Credit card'] || 0)}).`);
+    if (ju) out.push(`<b>Jupiter is barely on Meta:</b> ${nf(ju.live)} live ads, all for the Edge+ RuPay credit card, launched ${dlong(ju.last)}.`);
+    if (jm) out.push(`<b>Jumpp started on ${dlong(jm.first)}:</b> ${nf(jm.ads)} image ads, ${nf(jm.msgs['Gold'] || 0)} of them about gold.`);
+    if (sh) out.push(`<b>Shoonya is the only trading brand here:</b> ${nf(sh.msgs['Investing & trading'] || 0)} of ${nf(sh.ads)} ads, and ${per100(sh.lands['Website'] || 0, sh.ads)} in every 100 send people to its website rather than the app.`);
+    out.push(`<b>Hindi is the default voice:</b> ${per100(hindi, spoken.length)} in every 100 ads with speech are in Hindi; English ${per100(spoken.filter((x) => x.lang === 'English').length, spoken.length)}, Tamil ${per100(spoken.filter((x) => x.lang === 'Tamil').length, spoken.length)}.`);
+    return out;
+  })();
+  const live = B.map((b) => ({ l: b, v: S[b].live, all: S[b].ads })).sort((a, b) => b.v - a.v);
+  const msgCols = F.messages.filter((m) => B.some((b) => (S[b].msgs[m] || 0) >= 3));
+  const kindCols = KINDS.filter((k) => B.some((b) => S[b].kinds[k]));
+  const langs = [...new Set(list.map((x) => x.lang).filter((l) => l && !l.startsWith('No speech') && !/Malay/.test(l)))];
+  const langCols = langs.sort((a, b) => list.filter((x) => x.lang === b).length - list.filter((x) => x.lang === a).length).slice(0, 5);
+  return `${kpis(list)}
+    <section class="lead"><small>What the six brands are doing on Meta</small><h2>True Balance runs more ads on Meta than the other five together; the rest are new, small, or say one thing.</h2><ul>${lead.map((l) => `<li>${l}</li>`).join('')}</ul></section>
+    <section class="sec"><h3>Who is on Meta right now</h3><p>Ads running at the last check, per brand. Click a brand to open it.</p><div class="card">${bars(live, { fmt: (r) => `${nf(r.v)} of ${nf(r.all)}`, hi: (r) => r.l === live[0].l, onClick: true })}</div></section>
+    <section class="sec"><h3>What each brand talks about</h3><p>How many of each brand’s ads, in every 100, carry the message, read from the ad’s own words: caption, headline, what is said in the video and the text on the image. An ad can carry several. Click a square for the ads.</p><div class="card">${grid('Brand', B, msgCols, (b, m) => { const n = S[b].msgs[m] || 0; return { n, v: n / S[b].ads, text: n ? p100(n, S[b].ads) : '', title: `${n} of ${S[b].ads} ads` }; })}</div></section>
+    <div class="two">
+      <section class="sec"><h3>The ad formats</h3><p>In every 100 of a brand’s ads.</p><div class="card">${grid('Brand', B, kindCols, (b, k) => { const n = S[b].kinds[k] || 0; return { n, v: n / S[b].ads, text: n ? p100(n, S[b].ads) : '', title: `${n} ads` }; })}</div></section>
+      <section class="sec"><h3>The language they speak</h3><p>Ads with speech, in every 100 of a brand’s spoken ads.</p><div class="card">${grid('Brand', B.filter((b) => S[b].spoken >= 5), langCols, (b, l) => { const n = S[b].langs[l] || 0; return { n, v: n / S[b].spoken, text: n ? p100(n, S[b].spoken) : '', title: `${n} of ${S[b].spoken} ads with speech` }; })}<p class="note">Brands with fewer than 5 ads with speech (${B.filter((b) => S[b].spoken < 5).join(', ')}) are left out: too few to say.</p></div></section>
+    </div>
+    <section class="sec"><h3>When they launch</h3><p>New ads started each week over the last 16 weeks.</p><div class="card">${weeks(B.map((b) => ({ l: b, ads: adsOf(b) })))}</div></section>
+    <section class="sec"><h3>Where they send people</h3><p>The ad’s link, in every 100 of a brand’s ads.</p><div class="card">${grid('Brand', B, LANDS.filter((k) => B.some((b) => S[b].lands[k])), (b, k) => { const n = S[b].lands[k] || 0; return { n, v: n / S[b].ads, text: n ? p100(n, S[b].ads) : '', title: `${n} ads` }; })}</div></section>`;
+}
+
+function brandView(b) {
+  const S = F.stats[b], list = adsOf(b);
+  const msgs = F.messages.map((m) => ({ l: m, v: S.msgs[m] || 0 })).filter((r) => r.v).sort((a, x) => x.v - a.v);
+  const kinds = KINDS.map((k) => ({ l: k, v: S.kinds[k] || 0 })).filter((r) => r.v);
+  const langs = Object.entries(S.langs).map(([l, v]) => ({ l, v })).sort((a, x) => x.v - a.v);
+  const lands = LANDS.map((k) => ({ l: k, v: S.lands[k] || 0 })).filter((r) => r.v);
+  const longest = group(list.filter((x) => x.live)).sort((a, x) => x.days - a.days).slice(0, 4);
+  const op = {}; list.forEach((x) => { if (x.opening && x.opening.length > 14) { const k = x.opening.toLowerCase(); (op[k] ||= { t: x.opening, n: 0, x }).n++; } });
+  const openings = Object.values(op).sort((a, x) => x.n - a.n).slice(0, 6);
+  const top = msgs[0];
+  return `${kpis(list)}
+    <section class="lead"><small>${esc(b)} on Meta</small><h2>${top ? `${per100(top.v, S.ads)} in every 100 of ${esc(b)}’s ads are about ${esc(top.l.toLowerCase())}${msgs[1] ? `, then ${esc(msgs[1].l.toLowerCase())} (${per100(msgs[1].v, S.ads)})` : ''}.` : `${esc(b)} has ${nf(S.ads)} ads.`}</h2>
+      <ul><li>${nf(S.live)} of ${nf(S.ads)} ads are running now; ${nf(S.new30)} started in the last 30 days. First ad in the Library: ${dlong(S.first)}.</li>
+      <li>Mostly ${esc(kinds.sort((a, x) => x.v - a.v)[0].l.replace(/^Dynamic/, 'dynamic').replace(/^(Video|Image|Carousel)$/, (m) => m.toLowerCase()))} ads (${per100(kinds[0].v, S.ads)} in 100), sending people to the ${esc(lands.sort((a, x) => x.v - a.v)[0].l)} (${per100(lands[0].v, S.ads)} in 100).</li>
+      ${S.spoken ? `<li>${nf(S.spoken)} ads have speech: ${langs.slice(0, 3).map((r) => `${esc(r.l)} ${per100(r.v, S.spoken)} in 100`).join(', ')}.</li>` : '<li>Almost none of its ads have speech: music or text only.</li>'}
+      <li>A typical live ad has been running ${typ(S.live_days)} days; ${nf(S.creatives)} distinct creatives across the ${nf(S.ads)} ads.</li></ul></section>
+    <div class="two">
+      <section class="sec"><h3>What it talks about</h3><p>Ads carrying each message, out of ${nf(S.ads)}. Click one for those ads.</p><div class="card" id="bmsg">${bars(msgs, { fmt: (r) => `${nf(r.v)} · ${p100(r.v, S.ads)}%`, hi: (r) => r === msgs[0], onClick: true })}</div></section>
+      <section class="sec"><h3>Formats and links</h3><p>How its ads are built, and where they send people.</p><div class="card">${bars(kinds, { fmt: (r) => nf(r.v), hi: (r) => r === kinds[0] })}<div style="height:14px"></div>${bars(lands, { fmt: (r) => nf(r.v), hi: (r) => r === lands[0] })}</div></section>
+    </div>
+    ${openings.length ? `<section class="sec"><h3>How its videos open</h3><p>The first line spoken in its video ads (in English), most used first. Click one to see the ad.</p><div class="quotes">${openings.map((o, i) => `<button class="q" data-op="${i}">“${esc(o.t)}”<small>${o.n} ad${o.n > 1 ? 's' : ''}${o.x.lang && o.x.lang !== 'English' ? ` · spoken in ${esc(o.x.lang)}` : ''}</small></button>`).join('')}</div></section>` : ''}
+    <section class="sec"><h3>When it launches</h3><p>New ads each week, last 16 weeks.</p><div class="card">${weeks([{ l: b, ads: list }])}</div></section>
+    <section class="sec"><h3>Running the longest</h3><p>Live creatives the brand has kept running the longest: the ones it keeps paying to show.</p><div class="gal">${longest.map(cardHTML).join('')}</div></section>`;
+}
+
+// ---------------- gallery ----------------
+function cardHTML(g) {
+  const t = g.th[0];
+  return `<button class="ad" data-k="${esc(g.id)}"><div class="th">${t ? `<img loading="lazy" src="${t[0]}" alt="">` : ''}${t && t[1] === 'v' ? '<span class="play">▶ Video</span>' : ''}${g.n > 1 ? `<span class="n">×${g.n} ads</span>` : ''}</div>
+    <div class="bd"><div class="meta"><span>${esc(g.b)}</span><span>${esc(g.kind)}</span><span class="${g.live ? 'on' : ''}">${g.live ? `Live · ${g.days} days` : `Ran ${g.days} days`}</span></div>
+    ${g.opening ? `<div class="says">“${esc(g.opening)}”</div>` : g.head ? `<div class="says">${esc(g.head)}</div>` : ''}<div class="cap">${esc(g.cap || g.img || g.ocr)}</div></div></button>`;
+}
+let groups = [];
+function adsView() {
+  const base = adsOf(state.brand);
+  const S = {}; base.forEach((x) => x.msgs.forEach((m) => (S[m] = (S[m] || 0) + 1)));
+  const K = {}; base.forEach((x) => (K[x.kind] = (K[x.kind] || 0) + 1));
+  const q = state.q.toLowerCase();
+  const list = base.filter((x) => (!state.msg || x.msgs.includes(state.msg)) && (!state.kind || x.kind === state.kind) && (!state.live || x.live)
+    && (!q || [x.cap, x.head, x.tx, x.img, x.ocr, x.cards, x.b].join(' ').toLowerCase().includes(q)));
+  groups = group(list).sort((a, b) => (b.live - a.live) || b.n - a.n || b.days - a.days);
+  return `<section class="tools"><label class="search"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--muted)"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg><input id="q" placeholder="Search captions, what's said, text on the image…" value="${esc(state.q)}"></label>
+      <button class="chip${state.live ? ' on' : ''}" id="liveOnly">Running now</button></section>
+    <div class="chips">${Object.entries(S).sort((a, b) => b[1] - a[1]).map(([m, n]) => `<button class="chip${state.msg === m ? ' on' : ''}" data-msg="${esc(m)}">${esc(m)}<b>${n}</b></button>`).join('')}</div>
+    <div class="chips">${KINDS.filter((k) => K[k]).map((k) => `<button class="chip${state.kind === k ? ' on' : ''}" data-kind="${esc(k)}">${esc(k)}<b>${K[k]}</b></button>`).join('')}</div>
+    <p class="note" style="margin:0 0 12px">${nf(groups.length)} creatives from ${nf(list.length)} ads. Identical creatives are shown once with the number of ads using them.</p>
+    <section class="gal">${groups.slice(0, state.shown).map(cardHTML).join('')}</section>
+    ${groups.length > state.shown ? `<button class="pill more" id="more">Show more (${nf(groups.length - state.shown)} left)</button>` : ''}`;
+}
+
+function open(g) {
+  const x = g.ids ? g : { ...g, n: 1, ids: [g] };
+  $('#dlg').innerHTML = `<div class="dlg"><div class="media">${x.th.map((t) => `<img src="${t[0]}" alt="">`).join('') || '<p class="note">No picture saved for this ad.</p>'}
+      ${x.th.some((t) => t[1] === 'v') ? '<p class="note">A frame from the video. Play it in the Ad Library.</p>' : ''}</div>
+    <div class="info"><button class="x" aria-label="Close">✕</button>
+      <dl><dt>Brand</dt><dd>${esc(x.b)}</dd><dt>Format</dt><dd>${esc(x.kind)}</dd><dt>Status</dt><dd>${x.live ? 'Running now' : 'Stopped'}, ${x.days} days</dd><dt>${x.n > 1 ? 'First started' : 'Started'}</dt><dd>${dlong(x.start)}</dd>
+      <dt>Platforms</dt><dd>${esc(x.plat)}</dd><dt>Button</dt><dd>${esc(x.cta || '–')}</dd><dt>Sends to</dt><dd>${esc(x.lands)}</dd>${x.n > 1 ? `<dt>Ads</dt><dd>${x.n} ads use this creative</dd>` : ''}${x.msgs.length ? `<dt>Messages</dt><dd>${esc(x.msgs.join(', '))}</dd>` : ''}</dl>
+      ${x.head ? `<div><h4>Headline</h4><p>${esc(x.head)}</p></div>` : ''}
+      ${x.cap ? `<div><h4>Caption</h4><p>${esc(x.cap)}</p></div>` : ''}
+      ${x.cards ? `<div><h4>Card titles</h4><p>${esc(x.cards)}</p></div>` : ''}
+      ${x.tx ? `<div><h4>What is said${x.lang && x.lang !== 'English' ? ` (${esc(x.lang)}, in English)` : ''}</h4><p>${esc(x.tx)}</p></div>` : x.lang ? `<div><h4>Audio</h4><p>${esc(x.lang)}</p></div>` : ''}
+      ${x.txo && x.lang !== 'English' ? `<div><h4>As spoken</h4><p>${esc(x.txo)}</p></div>` : ''}
+      ${x.img ? `<div><h4>Text on the image</h4><p>${esc(x.img)}</p></div>` : x.ocr ? `<div><h4>Text on the image (machine read, as printed)</h4><p>${esc(x.ocr)}</p></div>` : ''}
+      ${x.shows ? `<div><h4>What the image shows</h4><p>${esc(x.shows)}</p></div>` : ''}
+      <a class="btn" href="${esc(x.url)}" target="_blank" rel="noopener">Open in the Ad Library ↗</a>
+      ${x.n > 1 ? `<div><h4>All ${x.n} ads</h4><p>${x.ids.slice(0, 40).map((a) => `<a href="${esc(a.url)}" target="_blank" rel="noopener">${dlong(a.start)}${a.live ? ' · live' : ''}</a>`).join(' · ')}</p></div>` : ''}
+    </div></div>`;
+  $('#dlg').showModal(); $('#dlg .x').onclick = () => $('#dlg').close();
+}
+$('#dlg').addEventListener('click', (e) => { if (e.target.id === 'dlg') $('#dlg').close(); });
+
+function render() {
+  save();
+  const b = state.brand, S = F.stats[b];
+  $('#app').innerHTML = `<section class="hero"><small>Fintech · Meta Ad Library</small><h1>${b === 'all' ? 'Fintech on Meta' : `${esc(b)} · Meta ads`}</h1>
+      <p>${b === 'all' ? `Every ad in the Meta Ad Library from ${F.brands.join(', ')}: what they say, the language they speak, the formats and how long they run. Scanned ${dlong(F.asOf)}.` : `All ${nf(S.ads)} of ${esc(b)}’s ads in the Meta Ad Library, with what each one says. Scanned ${dlong(F.asOf)}.`}</p>
+      <div class="modes" role="tablist"><button class="${state.mode === 'insights' ? 'on' : ''}" data-mode="insights">Insights</button><button class="${state.mode === 'ads' ? 'on' : ''}" data-mode="ads">All ads</button></div><div class="ticker"></div></section>
+    ${state.mode === 'ads' ? adsView() : b === 'all' ? overview() : brandView(b)}`;
+  document.querySelectorAll('[data-mode]').forEach((el) => (el.onclick = () => { state.mode = el.dataset.mode; render(); }));
+  wire();
+}
+function toAds(f) { Object.assign(state, { mode: 'ads', msg: null, kind: null, live: false, q: '', shown: 48 }, f); render(); scrollTo({ top: 0 }); }
+function wire() {
+  // overview: brand bars and grid squares
+  document.querySelectorAll('.br.clk[data-i]').forEach((el) => (el.onclick = () => {
+    const l = el.querySelector('.l').textContent;
+    if (F.brands.includes(l)) { state.brand = l; drawDD(); render(); scrollTo({ top: 0 }); } else toAds({ msg: l });
+  }));
+  document.querySelectorAll('table.grid button[data-r]').forEach((el) => (el.onclick = () => {
+    const r = el.dataset.r, c = el.dataset.c; state.brand = r; drawDD();
+    if (F.messages.includes(c)) toAds({ msg: c }); else if (KINDS.includes(c)) toAds({ kind: c }); else toAds({ q: '' });
+  }));
+  document.querySelectorAll('.q[data-op]').forEach((el) => (el.onclick = () => {
+    const list = adsOf(state.brand); const op = {}; list.forEach((x) => { if (x.opening && x.opening.length > 14) { const k = x.opening.toLowerCase(); (op[k] ||= { t: x.opening, n: 0, x }).n++; } });
+    const o = Object.values(op).sort((a, x) => x.n - a.n)[+el.dataset.op]; if (o) open(o.x);
+  }));
+  // gallery
+  const q = $('#q'); if (q) q.oninput = (e) => { state.q = e.target.value; state.shown = 48; const pos = e.target.selectionStart; render(); const n = $('#q'); n.focus(); n.setSelectionRange(pos, pos); };
+  const lo = $('#liveOnly'); if (lo) lo.onclick = () => { state.live = !state.live; render(); };
+  document.querySelectorAll('[data-msg]').forEach((el) => (el.onclick = () => { state.msg = state.msg === el.dataset.msg ? null : el.dataset.msg; state.shown = 48; render(); }));
+  document.querySelectorAll('[data-kind]').forEach((el) => (el.onclick = () => { state.kind = state.kind === el.dataset.kind ? null : el.dataset.kind; state.shown = 48; render(); }));
+  const more = $('#more'); if (more) more.onclick = () => { state.shown += 48; render(); };
+  document.querySelectorAll('.ad[data-k]').forEach((el) => (el.onclick = () => {
+    const g = groups.find((x) => x.id === el.dataset.k) || group(adsOf(state.brand).filter((x) => x.live)).find((x) => x.id === el.dataset.k);
+    if (g) open(g);
+  }));
+}
+const drawDD = () => dropdown($('#brandDD'), 'Fintech', [['all', 'All fintech', `${F.brands.length} brands · ${nf(F.ads.length)} ads`], ...F.brands.map((b) => [b, b, `${nf(F.stats[b].ads)} ads · ${nf(F.stats[b].live)} live`])],
+  () => state.brand, (v) => { state.brand = v; state.msg = null; state.kind = null; state.q = ''; state.shown = 48; render(); scrollTo({ top: 0 }); });
+drawDD();
+$('#theme').onclick = () => { const r = document.documentElement, dark = r.dataset.theme === 'dark'; r.dataset.theme = dark ? 'light' : 'dark'; try { localStorage.setItem('theme', r.dataset.theme); } catch (_) {} };
+render();
+</script>
+</body>
+</html>
