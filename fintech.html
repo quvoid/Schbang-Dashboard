@@ -152,7 +152,7 @@ footer{color:var(--muted);font-size:12px;padding:30px 0 50px;line-height:1.6}
 <footer class="wrap">Source: Meta Ad Library, India, each brand's own Facebook pages, scanned 18 Nov 2026. The Library shows no spend, reach or results, so every number here is a count of ads or creatives. Videos were transcribed with Whisper and images read for their text; a few images carry machine-read text in the original script. Click any ad to open it in the Ad Library.</footer>
 <dialog id="dlg"></dialog>
 
-<script src="fintech-data.js?v=202611181700"></script>
+<script src="fintech-data.js?v=202611181900"></script>
 <script>
 const F = window.FIN, $ = (s) => document.querySelector(s);
 const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
@@ -164,7 +164,7 @@ const dlong = (iso) => { if (!iso) return ''; const [y, m, d] = iso.split('-'); 
 const KINDS = ['Dynamic (DCO)', 'Video', 'Image', 'Carousel', 'Catalogue (DPA)'];
 const LANDS = ['Play Store', 'App Store', 'Website', 'Instagram / Facebook', 'No link'];
 const qs = new URLSearchParams(location.search);
-const state = { brand: F.brands.includes(qs.get('brand')) ? qs.get('brand') : 'all', mode: qs.get('mode') === 'ads' ? 'ads' : 'insights', q: '', msg: null, kind: null, live: false, shown: 48 };
+const state = { brand: F.brands.includes(qs.get('brand')) ? qs.get('brand') : 'all', mode: qs.get('mode') === 'ads' ? 'ads' : 'insights', q: '', msg: null, kind: null, live: false, style: null, creator: false, shown: 48 };
 const save = () => { const p = new URLSearchParams(); if (state.brand !== 'all') p.set('brand', state.brand); if (state.mode === 'ads') p.set('mode', 'ads'); history.replaceState(null, '', p.toString() ? `?${p}` : location.pathname); };
 const adsOf = (b) => F.ads.filter((x) => b === 'all' || x.b === b);
 const shade = (v) => { // warm scale for shares 0..1
@@ -206,6 +206,38 @@ const group = (list) => { // identical creatives (same picture and caption) show
   return [...m.values()];
 };
 
+// ---------------- video creatives and creators ----------------
+const vids = (list) => group(list.filter((x) => x.style)); // distinct video creatives, each with the ads using it
+function videoSecs(list) {
+  const v = vids(list), sp = v.filter((x) => x.lang && !x.lang.startsWith('No speech'));
+  return { v, sp };
+}
+function creatorBlock(list, brandName) {
+  const cr = list.filter((x) => x.creator);
+  if (!cr.length) return '';
+  const by = {}; cr.forEach((x) => { (by[x.creator] ||= []).push(x); });
+  const people = Object.entries(by).map(([l, a]) => ({ l, v: a.length, live: a.filter((x) => x.live).length })).sort((a, b) => b.v - a.v);
+  const own = list.filter((x) => !x.creator && x.style);
+  const styleShare = (arr) => { const c = {}; arr.forEach((x) => (c[x.style] = (c[x.style] || 0) + 1)); return c; };
+  const sc = styleShare(cr.filter((x) => x.style)), so = styleShare(own), nc = cr.filter((x) => x.style).length, no = own.length;
+  const styles = F.styles.filter((k) => sc[k] || so[k]);
+  const angC = {}; cr.forEach((x) => x.angles.forEach((a) => (angC[a] = (angC[a] || 0) + 1)));
+  const top = people.slice(0, 12), single = people.filter((p) => p.v === 1).length;
+  const best = group(cr).sort((a, b) => b.n - a.n || b.days - a.days).slice(0, 8);
+  const talk = sc['Creator / presenter to camera'] || 0, skit = sc['Skit, creator-style'] || 0;
+  return `<section class="sec" id="creators"><h3>Creator partnership ads${brandName ? '' : ': only True Balance runs them'}</h3>
+      <p>Ads run as a paid partnership with a creator’s page (“Paid partnership with …” in the Ad Library). ${nf(cr.length)} ads with ${nf(people.length)} creators, ${nf(cr.filter((x) => x.live).length)} of them running now.</p>
+      <div class="lead" style="margin-bottom:14px"><small>What the creators make</small><h2>${per100(talk + skit, nc)} in every 100 creator videos are a creator talking to camera or acting a short skit; the brand’s own are spread across ${Object.entries(so).sort((a, b) => b[1] - a[1]).slice(0, 3).map(([k, n]) => `${esc(k.toLowerCase())} (${p100(n, no)})`).join(', ')}.</h2>
+        <ul><li>${nf(people.length)} creators, most used once or twice: ${nf(single)} appear in a single ad. The biggest: ${top.slice(0, 4).map((p) => `${esc(p.l)} (${p.v})`).join(', ')}.</li>
+        <li>What creator ads argue: ${Object.entries(angC).sort((a, b) => b[1] - a[1]).slice(0, 3).map(([a, n]) => `${esc(a.toLowerCase())} in ${per100(n, cr.length)} of every 100`).join(', ')}.</li>
+        <li>Talking to camera: ${per100(talk, nc)} in 100 creator videos vs ${per100(so['Creator / presenter to camera'] || 0, no)} in 100 of the brand’s own. Skits: ${per100(skit, nc)} vs ${per100(so['Skit, creator-style'] || 0, no)}.</li></ul></div>
+      <div class="two">
+        <div class="card"><h4 style="margin:0 0 10px;font-size:14px">Creators with the most ads</h4>${bars(top, { fmt: (r) => `${nf(r.v)} ads`, hi: (r) => r === top[0] })}<p class="note">${nf(people.length - top.length)} more creators with fewer ads. Open “All ads” and pick “Creator ads” to see every one.</p></div>
+        <div class="card"><h4 style="margin:0 0 10px;font-size:14px">Creator videos vs the brand’s own, in every 100</h4>${grid('Video type', styles, ['Creator ads', 'Brand’s own'], (st, c) => { const n = c === 'Creator ads' ? sc[st] || 0 : so[st] || 0, d = c === 'Creator ads' ? nc : no; return { n, v: n / d, text: n ? p100(n, d) : '', title: `${n} of ${d} video ads` }; })}<p class="note">${nf(nc)} creator video ads, ${nf(no)} of the brand’s own.</p></div>
+      </div>
+      <div class="gal" style="margin-top:14px">${best.map(cardHTML).join('')}</div></section>`;
+}
+
 // ---------------- insights ----------------
 function kpis(list) {
   const spoken = list.filter((x) => x.lang && !x.lang.startsWith('No speech'));
@@ -231,6 +263,7 @@ function overview() {
     if (ju) out.push(`<b>Jupiter is barely on Meta:</b> ${nf(ju.live)} live ads, all for the Edge+ RuPay credit card, launched ${dlong(ju.last)}.`);
     if (jm) out.push(`<b>Jumpp started on ${dlong(jm.first)}:</b> ${nf(jm.ads)} image ads, ${nf(jm.msgs['Gold'] || 0)} of them about gold.`);
     if (sh) out.push(`<b>Shoonya is the only trading brand here:</b> ${nf(sh.msgs['Investing & trading'] || 0)} of ${nf(sh.ads)} ads, and ${per100(sh.lands['Website'] || 0, sh.ads)} in every 100 send people to its website rather than the app.`);
+    { const cr = list.filter((x) => x.creator); const n = new Set(cr.map((x) => x.creator)).size; if (cr.length) out.push(`<b>Only True Balance uses creators:</b> ${nf(cr.length)} paid partnership ads with ${nf(n)} creators, nearly all a creator talking to camera or acting a short skit about a money emergency. No other brand here runs a single one.`); }
     out.push(`<b>Hindi is the default voice:</b> ${per100(hindi, spoken.length)} in every 100 ads with speech are in Hindi; English ${per100(spoken.filter((x) => x.lang === 'English').length, spoken.length)}, Tamil ${per100(spoken.filter((x) => x.lang === 'Tamil').length, spoken.length)}.`);
     return out;
   })();
@@ -243,6 +276,9 @@ function overview() {
     <section class="lead"><small>What the six brands are doing on Meta</small><h2>True Balance runs more ads on Meta than the other five together; the rest are new, small, or say one thing.</h2><ul>${lead.map((l) => `<li>${l}</li>`).join('')}</ul></section>
     <section class="sec"><h3>Who is on Meta right now</h3><p>Ads running at the last check, per brand. Click a brand to open it.</p><div class="card">${bars(live, { fmt: (r) => `${nf(r.v)} of ${nf(r.all)}`, hi: (r) => r.l === live[0].l, onClick: true })}</div></section>
     <section class="sec"><h3>What each brand talks about</h3><p>How many of each brand’s ads, in every 100, carry the message, read from the ad’s own words: caption, headline, what is said in the video and the text on the image. An ad can carry several. Click a square for the ads.</p><div class="card">${grid('Brand', B, msgCols, (b, m) => { const n = S[b].msgs[m] || 0; return { n, v: n / S[b].ads, text: n ? p100(n, S[b].ads) : '', title: `${n} of ${S[b].ads} ads` }; })}</div></section>
+    <section class="sec"><h3>What their videos look like</h3><p>Every distinct video creative, looked at one by one and sorted by what is on screen, in every 100 of a brand’s videos. Click a square for those videos.</p><div class="card">${(() => { const V = {}; B.forEach((b) => (V[b] = vids(adsOf(b)))); const BB = B.filter((b) => V[b].length >= 5); const cols = F.styles.filter((k) => BB.some((b) => V[b].some((x) => x.style === k))); return grid('Brand', BB, cols, (b, k) => { const n = V[b].filter((x) => x.style === k).length; return { n, v: n / V[b].length, text: n ? p100(n, V[b].length) : '', title: `${n} of ${V[b].length} video creatives` }; }) + `<p class="note">${BB.map((b) => `${esc(b)} ${V[b].length}`).join(' · ')} video creatives. ${B.filter((b) => V[b].length < 5).map(esc).join(' and ')} run${B.filter((b) => V[b].length < 5).length === 1 ? 's' : ''} fewer than 5, so ${B.filter((b) => V[b].length < 5).length === 1 ? 'it is' : 'they are'} left out.</p>`; })()}</div></section>
+    <section class="sec"><h3>How the videos make the case</h3><p>What the video ads say to get the click, read from what is spoken and the caption, in every 100 of a brand’s video ads with speech. A video can do several.</p><div class="card">${(() => { const BB = B.filter((b) => adsOf(b).filter((x) => x.style && x.tx).length >= 10); const cols = F.angles.filter((k) => BB.some((b) => adsOf(b).some((x) => x.angles.includes(k)))); return grid('Brand', BB, cols, (b, k) => { const d = adsOf(b).filter((x) => x.style && x.tx).length, n = adsOf(b).filter((x) => x.style && x.tx && x.angles.includes(k)).length; return { n, v: n / d, text: n ? p100(n, d) : '', title: `${n} of ${d} spoken video ads` }; }); })()}</div></section>
+    ${creatorBlock(list)}
     <div class="two">
       <section class="sec"><h3>The ad formats</h3><p>In every 100 of a brand’s ads.</p><div class="card">${grid('Brand', B, kindCols, (b, k) => { const n = S[b].kinds[k] || 0; return { n, v: n / S[b].ads, text: n ? p100(n, S[b].ads) : '', title: `${n} ads` }; })}</div></section>
       <section class="sec"><h3>The language they speak</h3><p>Ads with speech, in every 100 of a brand’s spoken ads.</p><div class="card">${grid('Brand', B.filter((b) => S[b].spoken >= 5), langCols, (b, l) => { const n = S[b].langs[l] || 0; return { n, v: n / S[b].spoken, text: n ? p100(n, S[b].spoken) : '', title: `${n} of ${S[b].spoken} ads with speech` }; })}<p class="note">Brands with fewer than 5 ads with speech (${B.filter((b) => S[b].spoken < 5).join(', ')}) are left out: too few to say.</p></div></section>
@@ -272,6 +308,11 @@ function brandView(b) {
       <section class="sec"><h3>Formats and links</h3><p>How its ads are built, and where they send people.</p><div class="card">${bars(kinds, { fmt: (r) => nf(r.v), hi: (r) => r === kinds[0] })}<div style="height:14px"></div>${bars(lands, { fmt: (r) => nf(r.v), hi: (r) => r === lands[0] })}</div></section>
     </div>
     ${openings.length ? `<section class="sec"><h3>How its videos open</h3><p>The first line spoken in its video ads (in English), most used first. Click one to see the ad.</p><div class="quotes">${openings.map((o, i) => `<button class="q" data-op="${i}">“${esc(o.t)}”<small>${o.n} ad${o.n > 1 ? 's' : ''}${o.x.lang && o.x.lang !== 'English' ? ` · spoken in ${esc(o.x.lang)}` : ''}</small></button>`).join('')}</div></section>` : ''}
+    ${(() => { const V = vids(list); if (!V.length) return ''; const st = F.styles.map((k) => ({ l: k, v: V.filter((x) => x.style === k).length })).filter((r) => r.v).sort((a, x) => x.v - a.v);
+      const sp = list.filter((x) => x.style && x.tx); const an = F.angles.map((k) => ({ l: k, v: sp.filter((x) => x.angles.includes(k)).length })).filter((r) => r.v).sort((a, x) => x.v - a.v);
+      return `<div class="two"><section class="sec"><h3>What its videos look like</h3><p>${nf(V.length)} distinct video creatives, sorted by what is on screen. Click one for those videos.</p><div class="card" id="bstyle">${bars(st, { fmt: (r) => `${nf(r.v)} · ${p100(r.v, V.length)}%`, hi: (r) => r === st[0], onClick: true })}</div></section>
+        <section class="sec"><h3>How the videos make the case</h3><p>${nf(sp.length)} video ads with speech; what they say to get the click.</p><div class="card" id="bangle">${an.length ? bars(an, { fmt: (r) => `${nf(r.v)} · ${p100(r.v, sp.length)}%`, hi: (r) => r === an[0], onClick: true }) : '<p class="note">Too few videos with speech to say.</p>'}</div></section></div>`; })()}
+    ${creatorBlock(list, b)}
     <section class="sec"><h3>When it launches</h3><p>New ads each week, last 16 weeks.</p><div class="card">${weeks([{ l: b, ads: list }])}</div></section>
     <section class="sec"><h3>Running the longest</h3><p>Live creatives the brand has kept running the longest: the ones it keeps paying to show.</p><div class="gal">${longest.map(cardHTML).join('')}</div></section>`;
 }
@@ -280,7 +321,7 @@ function brandView(b) {
 function cardHTML(g) {
   const t = g.th[0];
   return `<button class="ad" data-k="${esc(g.id)}"><div class="th">${t ? `<img loading="lazy" src="${t[0]}" alt="">` : ''}${t && t[1] === 'v' ? '<span class="play">▶ Video</span>' : ''}${g.n > 1 ? `<span class="n">×${g.n} ads</span>` : ''}</div>
-    <div class="bd"><div class="meta"><span>${esc(g.b)}</span><span>${esc(g.kind)}</span><span class="${g.live ? 'on' : ''}">${g.live ? `Live · ${g.days} days` : `Ran ${g.days} days`}</span></div>
+    <div class="bd"><div class="meta"><span>${esc(g.creator ? `${g.b} × ${g.creator}` : g.b)}</span><span>${esc(g.style || g.kind)}</span><span class="${g.live ? 'on' : ''}">${g.live ? `Live · ${g.days} days` : `Ran ${g.days} days`}</span></div>
     ${g.opening ? `<div class="says">“${esc(g.opening)}”</div>` : g.head ? `<div class="says">${esc(g.head)}</div>` : ''}<div class="cap">${esc(g.cap || g.img || g.ocr)}</div></div></button>`;
 }
 let groups = [];
@@ -289,13 +330,15 @@ function adsView() {
   const S = {}; base.forEach((x) => x.msgs.forEach((m) => (S[m] = (S[m] || 0) + 1)));
   const K = {}; base.forEach((x) => (K[x.kind] = (K[x.kind] || 0) + 1));
   const q = state.q.toLowerCase();
-  const list = base.filter((x) => (!state.msg || x.msgs.includes(state.msg)) && (!state.kind || x.kind === state.kind) && (!state.live || x.live)
-    && (!q || [x.cap, x.head, x.tx, x.img, x.ocr, x.cards, x.b].join(' ').toLowerCase().includes(q)));
+  const list = base.filter((x) => (!state.msg || x.msgs.includes(state.msg) || x.angles.includes(state.msg)) && (!state.kind || x.kind === state.kind) && (!state.live || x.live) && (!state.style || x.style === state.style) && (!state.creator || x.creator)
+    && (!q || [x.cap, x.head, x.tx, x.img, x.ocr, x.cards, x.b, x.creator].join(' ').toLowerCase().includes(q)));
   groups = group(list).sort((a, b) => (b.live - a.live) || b.n - a.n || b.days - a.days);
   return `<section class="tools"><label class="search"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--muted)"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg><input id="q" placeholder="Search captions, what's said, text on the image…" value="${esc(state.q)}"></label>
       <button class="chip${state.live ? ' on' : ''}" id="liveOnly">Running now</button></section>
     <div class="chips">${Object.entries(S).sort((a, b) => b[1] - a[1]).map(([m, n]) => `<button class="chip${state.msg === m ? ' on' : ''}" data-msg="${esc(m)}">${esc(m)}<b>${n}</b></button>`).join('')}</div>
     <div class="chips">${KINDS.filter((k) => K[k]).map((k) => `<button class="chip${state.kind === k ? ' on' : ''}" data-kind="${esc(k)}">${esc(k)}<b>${K[k]}</b></button>`).join('')}</div>
+    ${(() => { const ST = {}; base.forEach((x) => x.style && (ST[x.style] = (ST[x.style] || 0) + 1)); const cr = base.filter((x) => x.creator).length;
+      return `<div class="chips">${F.styles.filter((k) => ST[k]).map((k) => `<button class="chip${state.style === k ? ' on' : ''}" data-style="${esc(k)}">${esc(k)}<b>${ST[k]}</b></button>`).join('')}${cr ? `<button class="chip${state.creator ? ' on' : ''}" id="crOnly">Creator ads<b>${cr}</b></button>` : ''}</div>`; })()}
     <p class="note" style="margin:0 0 12px">${nf(groups.length)} creatives from ${nf(list.length)} ads. Identical creatives are shown once with the number of ads using them.</p>
     <section class="gal">${groups.slice(0, state.shown).map(cardHTML).join('')}</section>
     ${groups.length > state.shown ? `<button class="pill more" id="more">Show more (${nf(groups.length - state.shown)} left)</button>` : ''}`;
@@ -306,7 +349,7 @@ function open(g) {
   $('#dlg').innerHTML = `<div class="dlg"><div class="media">${x.th.map((t) => `<img src="${t[0]}" alt="">`).join('') || '<p class="note">No picture saved for this ad.</p>'}
       ${x.th.some((t) => t[1] === 'v') ? '<p class="note">A frame from the video. Play it in the Ad Library.</p>' : ''}</div>
     <div class="info"><button class="x" aria-label="Close">✕</button>
-      <dl><dt>Brand</dt><dd>${esc(x.b)}</dd><dt>Format</dt><dd>${esc(x.kind)}</dd><dt>Status</dt><dd>${x.live ? 'Running now' : 'Stopped'}, ${x.days} days</dd><dt>${x.n > 1 ? 'First started' : 'Started'}</dt><dd>${dlong(x.start)}</dd>
+      <dl><dt>Brand</dt><dd>${esc(x.b)}</dd><dt>Format</dt><dd>${esc(x.kind)}</dd>${x.style ? `<dt>Video type</dt><dd>${esc(x.style)}${x.secs ? `, ${x.secs} s` : ''}</dd>` : ''}${x.creator ? `<dt>Creator</dt><dd>Paid partnership with ${esc(x.creator)}</dd>` : ''}${x.angles && x.angles.length ? `<dt>Its case</dt><dd>${esc(x.angles.join(', '))}</dd>` : ''}<dt>Status</dt><dd>${x.live ? 'Running now' : 'Stopped'}, ${x.days} days</dd><dt>${x.n > 1 ? 'First started' : 'Started'}</dt><dd>${dlong(x.start)}</dd>
       <dt>Platforms</dt><dd>${esc(x.plat)}</dd><dt>Button</dt><dd>${esc(x.cta || '–')}</dd><dt>Sends to</dt><dd>${esc(x.lands)}</dd>${x.n > 1 ? `<dt>Ads</dt><dd>${x.n} ads use this creative</dd>` : ''}${x.msgs.length ? `<dt>Messages</dt><dd>${esc(x.msgs.join(', '))}</dd>` : ''}</dl>
       ${x.head ? `<div><h4>Headline</h4><p>${esc(x.head)}</p></div>` : ''}
       ${x.cap ? `<div><h4>Caption</h4><p>${esc(x.cap)}</p></div>` : ''}
@@ -332,16 +375,17 @@ function render() {
   document.querySelectorAll('[data-mode]').forEach((el) => (el.onclick = () => { state.mode = el.dataset.mode; render(); }));
   wire();
 }
-function toAds(f) { Object.assign(state, { mode: 'ads', msg: null, kind: null, live: false, q: '', shown: 48 }, f); render(); scrollTo({ top: 0 }); }
+function toAds(f) { Object.assign(state, { mode: 'ads', msg: null, kind: null, live: false, style: null, creator: false, q: '', shown: 48 }, f); render(); scrollTo({ top: 0 }); }
 function wire() {
   // overview: brand bars and grid squares
   document.querySelectorAll('.br.clk[data-i]').forEach((el) => (el.onclick = () => {
     const l = el.querySelector('.l').textContent;
-    if (F.brands.includes(l)) { state.brand = l; drawDD(); render(); scrollTo({ top: 0 }); } else toAds({ msg: l });
+    if (F.brands.includes(l)) { state.brand = l; drawDD(); render(); scrollTo({ top: 0 }); } else if (F.styles.includes(l)) toAds({ style: l }); else if (F.messages.includes(l) || F.angles.includes(l)) toAds({ msg: l }); else toAds({ creator: true, q: l });
   }));
   document.querySelectorAll('table.grid button[data-r]').forEach((el) => (el.onclick = () => {
-    const r = el.dataset.r, c = el.dataset.c; state.brand = r; drawDD();
-    if (F.messages.includes(c)) toAds({ msg: c }); else if (KINDS.includes(c)) toAds({ kind: c }); else toAds({ q: '' });
+    const r = el.dataset.r, c = el.dataset.c; if (F.brands.includes(r)) { state.brand = r; drawDD(); }
+    if (F.styles.includes(r)) { state.brand = state.brand; toAds({ style: r, creator: c === 'Creator ads' }); return; }
+    if (F.messages.includes(c) || F.angles.includes(c)) toAds({ msg: c }); else if (KINDS.includes(c)) toAds({ kind: c }); else if (F.styles.includes(c)) toAds({ style: c }); else toAds({ q: '' });
   }));
   document.querySelectorAll('.q[data-op]').forEach((el) => (el.onclick = () => {
     const list = adsOf(state.brand); const op = {}; list.forEach((x) => { if (x.opening && x.opening.length > 14) { const k = x.opening.toLowerCase(); (op[k] ||= { t: x.opening, n: 0, x }).n++; } });
@@ -352,6 +396,8 @@ function wire() {
   const lo = $('#liveOnly'); if (lo) lo.onclick = () => { state.live = !state.live; render(); };
   document.querySelectorAll('[data-msg]').forEach((el) => (el.onclick = () => { state.msg = state.msg === el.dataset.msg ? null : el.dataset.msg; state.shown = 48; render(); }));
   document.querySelectorAll('[data-kind]').forEach((el) => (el.onclick = () => { state.kind = state.kind === el.dataset.kind ? null : el.dataset.kind; state.shown = 48; render(); }));
+  document.querySelectorAll('[data-style]').forEach((el) => (el.onclick = () => { state.style = state.style === el.dataset.style ? null : el.dataset.style; state.shown = 48; render(); }));
+  const co = $('#crOnly'); if (co) co.onclick = () => { state.creator = !state.creator; state.shown = 48; render(); };
   const more = $('#more'); if (more) more.onclick = () => { state.shown += 48; render(); };
   document.querySelectorAll('.ad[data-k]').forEach((el) => (el.onclick = () => {
     const g = groups.find((x) => x.id === el.dataset.k) || group(adsOf(state.brand).filter((x) => x.live)).find((x) => x.id === el.dataset.k);
