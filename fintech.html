@@ -52,6 +52,17 @@ header{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--bg) 9
 .modes button{border:0;background:none;color:var(--muted);font:500 14px Sora;padding:8px 16px;border-radius:999px;cursor:pointer}
 .modes button.on{background:var(--ink);color:var(--bg)}
 .ticker{margin-top:20px;height:6px;border-radius:6px;background:var(--grad)}
+.brands{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:8px;margin-top:18px}
+.bt{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--line);border-radius:14px;background:var(--panel);color:var(--ink);font-family:Sora;text-align:left;cursor:pointer;min-width:0}
+.bt:hover{border-color:var(--ink)}
+.bt.on{border-color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink);background:var(--sand-2)}
+.bt img,.bt .all{width:34px;height:34px;border-radius:8px;flex:none;object-fit:cover;background:var(--sand-2)}
+.bt .all{display:grid;place-items:center;font-size:13px;font-weight:700;color:var(--muted);border:1px solid var(--line)}
+.bt span{min-width:0}
+.bt b{display:block;font-size:13.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bt em{display:block;font-style:normal;font-size:11.5px;color:var(--muted);white-space:nowrap}
+@media (max-width:1100px){.brands{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media (max-width:620px){.brands{grid-template-columns:repeat(2,minmax(0,1fr))}}
 .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:22px 0}
 .kpi{background:var(--sand-2);border-radius:var(--radius);padding:18px 20px}
 .kpi b{display:block;font-size:30px;font-weight:600;letter-spacing:-.02em}
@@ -152,7 +163,7 @@ footer{color:var(--muted);font-size:12px;padding:30px 0 50px;line-height:1.6}
 <footer class="wrap">Source: Meta Ad Library, India, each brand's own Facebook pages, scanned 18 Nov 2026. The Library shows no spend, reach or results, so every number here is a count of ads or creatives. Videos were transcribed with Whisper and images read for their text; a few images carry machine-read text in the original script. Click any ad to open it in the Ad Library.</footer>
 <dialog id="dlg"></dialog>
 
-<script src="fintech-data.js?v=202611181900"></script>
+<script src="fintech-data.js?v=202611182000"></script>
 <script>
 const F = window.FIN, $ = (s) => document.querySelector(s);
 const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
@@ -199,6 +210,7 @@ function weeks(rowsData, n = 16) { // ads started per week, last n weeks
   return `<div class="weeks">${rowsData.map((r) => `<div class="wk"><span>${esc(r.l)}</span><span class="cols" style="--n:${n}">${r.c.map((v, i) => `<i class="${v ? '' : 'z'}" style="height:${(100 * v) / mx}%" title="${v} ads started in week ${i + 1}"></i>`).join('')}</span><em>${nf(r.c.reduce((a, b) => a + b, 0))}</em></div>`).join('')}
     <div class="wkax"><span></span><span><span>${dlong(start).replace(/ \d{4}$/, '')}</span><span>${dlong(F.asOf).replace(/ \d{4}$/, '')}</span></span><span></span></div></div>`;
 }
+const lc = (m) => m.toLowerCase().replace(/\bupi\b/g, 'UPI').replace(/\bdco\b/g, 'DCO');
 const typ = (arr) => { const a = [...arr].sort((x, y) => x - y); return a.length ? a[Math.floor(a.length / 2)] : 0; };
 const group = (list) => { // identical creatives (same picture and caption) shown once, with how many ads use them
   const m = new Map(); list.forEach((x) => { const k = `${x.b}|${x.th[0]?.[0] || x.id}|${x.cap.slice(0, 80)}`; if (!m.has(k)) m.set(k, { ...x, n: 0, ids: [] }); const g = m.get(k); g.n++; g.ids.push(x); if (x.live) g.live = true; if (x.days > g.days) g.days = x.days; if (x.start && x.start < g.start) g.start = x.start; });
@@ -298,7 +310,7 @@ function brandView(b) {
   const openings = Object.values(op).sort((a, x) => x.n - a.n).slice(0, 6);
   const top = msgs[0];
   return `${kpis(list)}
-    <section class="lead"><small>${esc(b)} on Meta</small><h2>${top ? `${per100(top.v, S.ads)} in every 100 of ${esc(b)}’s ads are about ${esc(top.l.toLowerCase())}${msgs[1] ? `, then ${esc(msgs[1].l.toLowerCase())} (${per100(msgs[1].v, S.ads)})` : ''}.` : `${esc(b)} has ${nf(S.ads)} ads.`}</h2>
+    <section class="lead"><small>${esc(b)} on Meta</small><h2>${top ? `${per100(top.v, S.ads)} in every 100 of ${esc(b)}’s ads are about ${esc(lc(top.l))}${msgs[1] ? `, then ${esc(lc(msgs[1].l))} (${per100(msgs[1].v, S.ads)})` : ''}.` : `${esc(b)} has ${nf(S.ads)} ads.`}</h2>
       <ul><li>${nf(S.live)} of ${nf(S.ads)} ads are running now; ${nf(S.new30)} started in the last 30 days. First ad in the Library: ${dlong(S.first)}.</li>
       <li>Mostly ${esc(kinds.sort((a, x) => x.v - a.v)[0].l.replace(/^Dynamic/, 'dynamic').replace(/^(Video|Image|Carousel)$/, (m) => m.toLowerCase()))} ads (${per100(kinds[0].v, S.ads)} in 100), sending people to the ${esc(lands.sort((a, x) => x.v - a.v)[0].l)} (${per100(lands[0].v, S.ads)} in 100).</li>
       ${S.spoken ? `<li>${nf(S.spoken)} ads have speech: ${langs.slice(0, 3).map((r) => `${esc(r.l)} ${per100(r.v, S.spoken)} in 100`).join(', ')}.</li>` : '<li>Almost none of its ads have speech: music or text only.</li>'}
@@ -370,9 +382,11 @@ function render() {
   const b = state.brand, S = F.stats[b];
   $('#app').innerHTML = `<section class="hero"><small>Fintech · Meta Ad Library</small><h1>${b === 'all' ? 'Fintech on Meta' : `${esc(b)} · Meta ads`}</h1>
       <p>${b === 'all' ? `Every ad in the Meta Ad Library from ${F.brands.join(', ')}: what they say, the language they speak, the formats and how long they run. Scanned ${dlong(F.asOf)}.` : `All ${nf(S.ads)} of ${esc(b)}’s ads in the Meta Ad Library, with what each one says. Scanned ${dlong(F.asOf)}.`}</p>
+      <nav class="brands" aria-label="Choose a brand">${[['all', 'All fintech', `${F.brands.length} brands`], ...F.brands.map((x) => [x, x, `${nf(F.stats[x].ads)} ads · ${nf(F.stats[x].live)} live`])].map(([v, t, sub]) => `<button class="bt${state.brand === v ? ' on' : ''}" data-brand="${esc(v)}" aria-pressed="${state.brand === v}">${v === 'all' ? '<i class="all">All</i>' : F.logos?.[v] ? `<img src="${F.logos[v]}" alt="">` : '<i class="all">·</i>'}<span><b>${esc(t)}</b><em>${sub}</em></span></button>`).join('')}</nav>
       <div class="modes" role="tablist"><button class="${state.mode === 'insights' ? 'on' : ''}" data-mode="insights">Insights</button><button class="${state.mode === 'ads' ? 'on' : ''}" data-mode="ads">All ads</button></div><div class="ticker"></div></section>
     ${state.mode === 'ads' ? adsView() : b === 'all' ? overview() : brandView(b)}`;
   document.querySelectorAll('[data-mode]').forEach((el) => (el.onclick = () => { state.mode = el.dataset.mode; render(); }));
+  document.querySelectorAll('[data-brand]').forEach((el) => (el.onclick = () => { state.brand = el.dataset.brand; Object.assign(state, { msg: null, kind: null, style: null, creator: false, q: '', shown: 48 }); drawDD(); render(); }));
   wire();
 }
 function toAds(f) { Object.assign(state, { mode: 'ads', msg: null, kind: null, live: false, style: null, creator: false, q: '', shown: 48 }, f); render(); scrollTo({ top: 0 }); }
