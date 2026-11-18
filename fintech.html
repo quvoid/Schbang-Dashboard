@@ -511,9 +511,9 @@ function creatorsView(b) {
       <div class="kpis" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px">
         ${[[nf(all.length), 'collab posts'], [nf(creators), 'creators and partner accounts'], [nf(typ(views)), 'typical views per post'], [nf(all.filter((x) => x.paid).length), 'carry the Paid partnership label']].map(([n, l]) => `<div class="card"><b style="font-size:28px;display:block">${n}</b><span class="note">${l}</span></div>`).join('')}</div></section>
     <section class="sec"><h3>What we found</h3><div class="card"><ul style="margin:0;padding-left:18px;display:grid;gap:8px">${find.map((f) => `<li>${esc(f)}</li>`).join('')}</ul></div></section>
-    <div class="two">${blk('The problems they target', 'prob', 'The money problem each post opens on. Click one for those posts.')}${blk('The hooks', 'hook', 'How the first seconds grab attention.')}</div>
+    <div class="two">${blk('The problems they target', 'theme', 'The money problem each post opens on. Click one for those posts.')}${blk('The hooks', 'hook', 'How the first seconds grab attention.')}</div>
     <div class="two">${blk('What the videos look like', 'fmt', 'The format of each collab post.')}${blk('Who they use', 'ctype', 'The kind of account the brand partners with.')}</div>
-    ${blk('What they push', 'prod', 'The product or offer each post sells.')}
+    ${blk('What they push', 'pgroup', 'The product or offer each post sells.')}
     <section class="sec"><h3>${state.cfilter ? `Posts: ${esc(state.cfilter.v)} <button class="chip on" id="cfOff">Clear ✕</button>` : 'Top collab posts by views'}</h3><p>${nf(list.length)} posts, most viewed first. Click one to watch it.</p>
       <div class="gal">${top.slice(0, state.shown).map((x) => `<button class="ad" data-ig="${esc(x.id)}"><div class="th"><img loading="lazy" src="${x.poster}" alt="">${x.type === 'video' ? '<span class="play">▶ Play</span>' : x.slides > 1 ? `<span class="n">${x.slides} slides</span>` : ''}</div>
         <div class="bd"><div class="meta"><span>${esc(x.b)} × @${esc(x.cr)}</span><span>${esc(x.fmt)}</span><span>${x.views ? `${nf(x.views)} views` : esc(dlong(x.date))}</span></div>
@@ -551,7 +551,7 @@ function render() {
 function toAds(f) { Object.assign(state, { mode: 'ads', msg: null, kind: null, live: false, style: null, creator: false, lang: null, q: '', shown: 48 }, f); render(); scrollTo({ top: 0 }); }
 function wire() {
   // overview: brand bars and grid squares
-  document.querySelectorAll('.br.clk[data-i]').forEach((el) => (el.onclick = () => {
+  document.querySelectorAll('.br.clk[data-i]').forEach((el) => !el.closest('[data-ck]') && (el.onclick = () => {
     const l = el.querySelector('.l').textContent;
     if (F.brands.includes(l)) { state.brand = l; drawDD(); render(); scrollTo({ top: 0 }); } else if (F.styles.includes(l)) toAds({ style: l }); else if (F.messages.includes(l) || F.angles.includes(l)) toAds({ msg: l }); else toAds({ creator: true, q: l });
   }));
