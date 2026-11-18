@@ -105,6 +105,18 @@ table.grid td button.z{cursor:default;background:transparent!important;color:var
 .wkax{display:grid;grid-template-columns:minmax(96px,150px) minmax(0,1fr) 60px;gap:12px;font-size:11px;color:var(--muted)}
 .wkax span:nth-child(2){display:flex;justify-content:space-between}
 .note{font-size:12px;color:var(--muted);margin:10px 0 0;line-height:1.5}
+.pb-core{background:var(--ink);color:var(--bg);border-radius:var(--radius);padding:20px 24px;margin:0 0 12px}
+.pb-core small,.pb-so small{display:block;font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:600;opacity:.6;margin-bottom:6px}
+.pb-core b{font-size:clamp(17px,2vw,21px);line-height:1.4;font-weight:600;letter-spacing:-.01em}
+.pb-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,340px),1fr));gap:12px}
+.pb-pt{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:18px 20px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.pb-n{font-size:12px;font-weight:700;color:var(--orange);letter-spacing:.04em}
+.pb-pt h4{margin:0;font-size:16px;font-weight:600;letter-spacing:-.01em}
+.pb-pt p{margin:0;font-size:13.5px;line-height:1.6;color:var(--ink-2)}
+.pb-ev{margin-top:auto;align-self:flex-start;border:0;background:none;padding:4px 0 0;font:600 13px Sora;color:var(--ink);cursor:pointer;text-decoration:underline;text-underline-offset:3px;text-decoration-color:var(--line)}
+.pb-so{margin-top:12px;background:var(--sand-2);border-radius:var(--radius);padding:18px 22px}
+.pb-so small{color:var(--muted);opacity:1}
+.pb-so ul{margin:0;padding-left:18px;display:grid;gap:6px;font-size:14px;line-height:1.55}
 /* openings */
 .quotes{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,320px),1fr));gap:12px}
 .q{background:var(--sand-2);border-radius:14px;padding:14px 16px;font-size:14px;line-height:1.5;cursor:pointer;border:0;text-align:left;color:var(--ink);font-family:Sora}
@@ -163,7 +175,7 @@ footer{color:var(--muted);font-size:12px;padding:30px 0 50px;line-height:1.6}
 <footer class="wrap">Source: Meta Ad Library, India, each brand's own Facebook pages, scanned 18 Nov 2026. The Library shows no spend, reach or results, so every number here is a count of ads or creatives. Videos were transcribed with Whisper and images read for their text; a few images carry machine-read text in the original script. Click any ad to open it in the Ad Library.</footer>
 <dialog id="dlg"></dialog>
 
-<script src="fintech-data.js?v=202611182000"></script>
+<script src="fintech-data.js?v=202611182100"></script>
 <script>
 const F = window.FIN, $ = (s) => document.querySelector(s);
 const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
@@ -175,7 +187,7 @@ const dlong = (iso) => { if (!iso) return ''; const [y, m, d] = iso.split('-'); 
 const KINDS = ['Dynamic (DCO)', 'Video', 'Image', 'Carousel', 'Catalogue (DPA)'];
 const LANDS = ['Play Store', 'App Store', 'Website', 'Instagram / Facebook', 'No link'];
 const qs = new URLSearchParams(location.search);
-const state = { brand: F.brands.includes(qs.get('brand')) ? qs.get('brand') : 'all', mode: qs.get('mode') === 'ads' ? 'ads' : 'insights', q: '', msg: null, kind: null, live: false, style: null, creator: false, shown: 48 };
+const state = { brand: F.brands.includes(qs.get('brand')) ? qs.get('brand') : 'all', mode: qs.get('mode') === 'ads' ? 'ads' : 'insights', q: '', msg: null, kind: null, live: false, style: null, creator: false, lang: null, shown: 48 };
 const save = () => { const p = new URLSearchParams(); if (state.brand !== 'all') p.set('brand', state.brand); if (state.mode === 'ads') p.set('mode', 'ads'); history.replaceState(null, '', p.toString() ? `?${p}` : location.pathname); };
 const adsOf = (b) => F.ads.filter((x) => b === 'all' || x.b === b);
 const shade = (v) => { // warm scale for shares 0..1
@@ -217,6 +229,103 @@ const group = (list) => { // identical creatives (same picture and caption) show
   m.forEach((g) => g.ids.sort((a, b) => (a.start < b.start ? -1 : 1)));
   return [...m.values()];
 };
+
+// Creative playbooks: written by reading every video script and the main static creatives of each brand
+// (Schbang analysis, 18 Nov 2026). Each point names the ads behind it with a filter; the page counts them live.
+const PLAYBOOK = {
+  'Navi Money': {
+    core: 'One promise, told through everyday payments: “Navi pays you back”. Real money as cashback on every UPI payment, straight to your bank account.',
+    points: [
+      ['The concept', 'Each video takes one everyday payment moment: splitting a dinner bill, chai and samosa, an auto ride, the electricity bill or a recharge, shopping. Every one ends on the same payoff, the cashback screen. Use case is the variable; the promise never changes.', { msg: 'Daily cashback' }],
+      ['The enemy', 'Scripts aim straight at rival UPI apps’ scratch cards: “My UPI app gives me useless coupons”, a glasses coupon, a makeup coupon. Navi’s answer is “real money, not coupons”. It is a direct attack on PhonePe, Google Pay and Paytm reward mechanics.', { q: 'coupon' }],
+      ['How it proves it', 'More than half of its videos are a phone in hand: scan, enter the PIN, “Payment successful”, then ₹10 cashback. Some are shot as a “tech creator” review (“I tested Navi UPI… the UI is very clean”) to borrow a reviewer’s credibility. The statics add scale: “1 Cr+ people get daily cashback”.', { style: 'App demo on a phone' }],
+      ['The offer', 'Small, concrete and frequent rather than big: “up to ₹10 cashback”, “Send ₹1 to a friend, get up to ₹10”, “Chai ho ya samosa”. Every payment feels rewarded, not just the large ones.', { q: '₹10' }],
+      ['How it is run', 'Dynamic (DCO) ads, each pairing a video with one use-case line: “Every bill can pay you back”, “It’s paid. That fast.”, “Split bills, earn cashback”, “Fast travel payments”, “Snacks or meals, earn cashback”. 73 of its 120 ads started in the last 10 days: a fresh burst, all sent to the Play Store.', { kind: 'Dynamic (DCO)' }],
+      ['Language and talent', 'Hindi and Hinglish voice-overs with young urban actors and creators in short (20–50 s) scenes. No paid creator partnerships and no celebrity: Navi runs the creator look from its own page.', { lang: 'Hindi' }],
+    ],
+    sowhat: ['For a UPI brand, Navi is making “coupons vs real money” the battleground; scratch-card rewards are being framed as a joke.', 'Navi’s ads are all about payments: loans, cards and insurance show up only as tabs on the app screen, never as the message. This burst is about winning daily UPI usage.'],
+  },
+  'Jio Finance': {
+    core: 'A finance marketplace with a loyalty currency: compare loans and cards from many lenders in one app, and earn JioPoints on everything.',
+    points: [
+      ['The positioning', 'Jio Finance sells choice, not its own product: “compare the personal loan offers of multiple companies side by side”, “Compare 50+ credit cards”, “Compare multiple cards. Zero bias.”', { q: 'compare' }],
+      ['The reward currency', 'JioPoints run through nearly every ad: earn up to 2,000, 4,000 or 5,000 points on a card activation or loan disbursal. JioFinance+ adds a ₹0 upgrade, 1.25x JioPoints and up to ₹7,000 cashback.', { q: 'JioPoints' }],
+      ['The product range', 'A broad catalogue rather than one hero: personal loans up to ₹5 lakh, lifetime-free and fuel credit cards, Gold SIP from ₹10, rewards on UPI payments.', { msg: 'Credit card' }],
+      ['The format', 'Mostly silent motion graphics and app walk-throughs: gold-plus-sign cards, phone UI, short benefit lines. Few of its videos have a voice, and those that do are need-led: a medical emergency, fuel spends, owning gold.', { style: 'Motion graphics / text card' }],
+      ['The language', 'English-led: most of its spoken ads are in English, unusual for a mass Jio audience. Hindi appears mainly in the text on its static cards.', { lang: 'English' }],
+      ['The timing', 'Every one of its ads started on or after 16 Oct 2026, all still running: a new entrant building its first always-on set.', { live: true }],
+    ],
+    sowhat: ['Jio Finance competes on aggregation and points, not on any one product’s rate or speed.', 'There are almost no people or stories in its ads yet, so its creative has a lot of room to grow.'],
+  },
+  'True Balance': {
+    core: 'Instant small loans for life’s moments, won through sheer creative volume: 763 ads, about 280 video creatives and 85 creators, all saying the same five facts.',
+    points: [
+      ['The creator army', 'Only True Balance runs creator partnerships: 263 ads with 85 creators, from Amit Bhadana (31 ads) to dozens used once. The long tail looks like a test-and-scale system: many creators tried, the winners re-cut into more ads.', { creator: true }],
+      ['The brief every creator gets', 'Almost every creator script carries the same claims in the same order: loan from ₹5,000 to ₹5 lakh, 100% digital and paperless, RBI-registered NBFC partners, money directly to your bank account. The mandatory lines double as compliance and consistency.', { q: 'RBI' }],
+      ['The story engines', 'Skits run on a few recurring setups: a friend asking for ₹500, a child asking “Papa?” who says “talk to your mom”, festive gifting and home renovation, a trip or honeymoon, a new phone, camera or laptop, a small business (shop stock, a home baker’s oven, a delivery bike, a printing machine), and emergencies (hospital bill, car or bike repair, a broken AC).', { msg: 'Money emergency' }],
+      ['The brand film system', 'Produced films repeat one formula: a need, the line “Jhat se loan, phat se …” (camera, gift, oven), and the sign-off “True Balance, aapki har zarurat ka saathi” (your companion for every need). Each film is a different use case.', { style: 'Produced ad film' }],
+      ['Regional reach', 'The only brand here speaking Tamil and Gujarati: long (40–110 s) skits from South Indian creators sit next to 15-second Hindi talking heads.', { lang: 'Tamil' }],
+      ['Handling the objection', 'Trust is argued directly: “8 crore / 10 crore Indians trust True Balance”, a “fake loan app vs True Balance” skit, free credit-score checks, “zero hidden charges”.', { msg: 'Trust & regulation' }],
+      ['Always on', 'A typical live True Balance ad has run about 111 days. It keeps winners running for months, unlike the short bursts of the other brands.', { live: true }],
+    ],
+    sowhat: ['True Balance has turned creators into a media channel: hundreds of low-cost, native-looking ads instead of a few films.', 'It owns “small loan for a real need” in Hindi and Tamil; any lender entering Meta will be measured against this volume.'],
+  },
+  Shoonya: {
+    core: 'A zero-cost trading platform now dressing up as the serious trader’s tool: from “brokerage-free” to “Dalal Street ka Khiladi”.',
+    points: [
+      ['The price war heritage', 'Older films mock fees: “Don’t put the lime of brokerage on your investment”, a man who meets his “AMC” at the door. The offer: zero brokerage on delivery, ₹5 per order, free AMC, zero account-opening charges.', { q: 'brokerage' }],
+      ['The new campaign', 'The latest ads (the last 5–10 days) introduce “Dalal Street ka Khiladi”: traders are many, players are few. Players get one-click chart trading, 100+ indicators, algo trading with low-latency APIs, the SenseAI multi-agent assistant and up to 3x margin.', { q: 'Khiladi' }],
+      ['The research funnel', 'A sub-brand, the Research Desk by Shoonya, gives away “₹399 worth of research for ₹0, till 31 Dec 2026” and pushes people to a Telegram channel: a lead funnel, not an app install.', { q: 'Research' }],
+      ['Education as ads', 'Presenter-led explainers on technical analysis basics (price, trends, volume) run as ads: finfluencer-style content under the brand’s name.', { style: 'Creator / presenter to camera' }],
+      ['The compliance cost', 'Every spoken ad ends on the SEBI risk line (“Investments in securities market are subject to market risks…”), a few seconds of every spot no other category pays.', { q: 'market risk' }],
+      ['Copy voice', 'Statics speak Hinglish trader-talk: “Watchlist bana li. Ab har move par nazar toh rakhlo”, “Trading mein naye, hum purane hai”.', { kind: 'Dynamic (DCO)' }],
+    ],
+    sowhat: ['Shoonya is moving from price to capability: free trading alone is no longer the story.', 'Almost half its ads send people to its website and Telegram rather than the app, so it is buying leads as well as installs.'],
+  },
+  Jupiter: {
+    core: 'A single product launch: the Lifetime Free Edge+ RuPay credit card, issued by CSB Bank and available only on Jupiter.',
+    points: [
+      ['One product, seven framings', 'Its live ads test different reasons to get the same card: lifetime free (₹0 joining, ₹0 annual), a free 1-year JioHotstar subscription, rewards (50% on shopping, 25% on Jupiter flights and hotels, 5% on UPI), and bank trust (“CSB Bank issued”).', { live: true }],
+      ['The format', 'Static and dynamic product cards plus one motion video: no people, no voice, no story.', { kind: 'Dynamic (DCO)' }],
+      ['The timing', 'Launched on 16 Nov 2026, two days before this scan, after a single earlier ad that ran from 7 Sep to 17 Nov.', {}],
+    ],
+    sowhat: ['Jupiter is barely on Meta. The OTT bundle is the most distinctive hook in the set.'],
+  },
+  Jumpp: {
+    core: 'Finvasia’s (the company behind Shoonya) money app for first-time savers: digital gold from ₹50 and jAI, an AI that tracks your spends.',
+    points: [
+      ['Gold for everyone', 'Digital gold from ₹50, bought on UPI from your phone: “Sona lo. Sambhalo mat.”, “Sona sirf tyohar pe kyun?”, “Chhota investment. Badi chamak.”', { msg: 'Gold' }],
+      ['The AI money buddy', 'jAI reads your bank-linked spends and budgets for you: “Salary credit hui aur do hafte mein khatam?”, “Karo paise se baat”.', { q: 'jAI' }],
+      ['The format and voice', 'Almost entirely static image ads in Hinglish, all launched since 26 Oct 2026.', { kind: 'Image' }],
+    ],
+    sowhat: ['Jumpp speaks to the young earner whose salary runs out mid-month, the same person True Balance lends to.'],
+  },
+};
+const LANDSCAPE = [
+  ['Two playbooks', 'True Balance wins by volume: creators, skits and hundreds of variants. Navi and Jio Finance win by product: app demos, dynamic ads and one clear offer each.'],
+  ['Rewards are the new battleground', 'Navi pays real cash (“not coupons”), Jio Finance pays JioPoints, Jupiter bundles JioHotstar. Each one frames its reward against the others.'],
+  ['Hindi and Hinglish by default', 'Most ads with speech are in Hindi. Only True Balance goes regional (Tamil, Gujarati). Jio Finance is the outlier, speaking mostly English.'],
+  ['Creators, but no celebrities', 'No brand here uses a celebrity. Only True Balance pays creators, and it uses 85 of them.'],
+  ['Trust lines are mandatory copy', 'Lenders repeat “RBI-registered NBFC partners”, traders read the SEBI risk line. Trust is a compliance line in every ad rather than a creative idea.'],
+  ['The white space', 'Nobody tells a long-form brand story about financial confidence. No one outside True Balance speaks a South Indian language. No one uses creators for payments or investing.'],
+];
+
+const evMatch = (e) => (x) => (!e.style || x.style === e.style) && (!e.msg || x.msgs.includes(e.msg) || x.angles.includes(e.msg)) && (!e.kind || x.kind === e.kind)
+  && (!e.lang || x.lang === e.lang) && (!e.creator || !!x.creator) && (!e.live || x.live)
+  && (!e.q || [x.cap, x.head, x.tx, x.img, x.ocr, x.cards, x.creator].join(' ').toLowerCase().includes(e.q.toLowerCase()));
+function playbookHTML(b) {
+  const P = PLAYBOOK[b]; if (!P) return '';
+  const list = adsOf(b);
+  return `<section class="sec pb"><h3>Creative playbook</h3><p>Written from every video script and the main static creatives of ${esc(b)}. Each point opens the ads behind it.</p>
+    <div class="pb-core"><small>The core idea</small><b>${esc(P.core)}</b></div>
+    <div class="pb-grid">${P.points.map(([h, t, e], i) => { const n = Object.keys(e).length ? list.filter(evMatch(e)).length : 0; return `<article class="pb-pt"><span class="pb-n">${String(i + 1).padStart(2, '0')}</span><h4>${esc(h)}</h4><p>${esc(t)}</p>${n ? `<button class="pb-ev" data-pb="${i}">${nf(n)} ads →</button>` : ''}</article>`; }).join('')}</div>
+    <div class="pb-so"><small>What it means</small><ul>${P.sowhat.map((x) => `<li>${esc(x)}</li>`).join('')}</ul></div></section>`;
+}
+function landscapeHTML() {
+  return `<section class="sec pb"><h3>The creative landscape</h3><p>What the six brands’ ads add up to, from reading every video script and the main static creatives.</p>
+    <div class="pb-grid">${LANDSCAPE.map(([h, t], i) => `<article class="pb-pt"><span class="pb-n">${String(i + 1).padStart(2, '0')}</span><h4>${esc(h)}</h4><p>${esc(t)}</p></article>`).join('')}</div>
+    <p class="note">Open a brand above for its full creative playbook.</p></section>`;
+}
 
 // ---------------- video creatives and creators ----------------
 const vids = (list) => group(list.filter((x) => x.style)); // distinct video creatives, each with the ads using it
@@ -286,6 +395,7 @@ function overview() {
   const langCols = langs.sort((a, b) => list.filter((x) => x.lang === b).length - list.filter((x) => x.lang === a).length).slice(0, 5);
   return `${kpis(list)}
     <section class="lead"><small>What the six brands are doing on Meta</small><h2>True Balance runs more ads on Meta than the other five together; the rest are new, small, or say one thing.</h2><ul>${lead.map((l) => `<li>${l}</li>`).join('')}</ul></section>
+    ${landscapeHTML()}
     <section class="sec"><h3>Who is on Meta right now</h3><p>Ads running at the last check, per brand. Click a brand to open it.</p><div class="card">${bars(live, { fmt: (r) => `${nf(r.v)} of ${nf(r.all)}`, hi: (r) => r.l === live[0].l, onClick: true })}</div></section>
     <section class="sec"><h3>What each brand talks about</h3><p>How many of each brand’s ads, in every 100, carry the message, read from the ad’s own words: caption, headline, what is said in the video and the text on the image. An ad can carry several. Click a square for the ads.</p><div class="card">${grid('Brand', B, msgCols, (b, m) => { const n = S[b].msgs[m] || 0; return { n, v: n / S[b].ads, text: n ? p100(n, S[b].ads) : '', title: `${n} of ${S[b].ads} ads` }; })}</div></section>
     <section class="sec"><h3>What their videos look like</h3><p>Every distinct video creative, looked at one by one and sorted by what is on screen, in every 100 of a brand’s videos. Click a square for those videos.</p><div class="card">${(() => { const V = {}; B.forEach((b) => (V[b] = vids(adsOf(b)))); const BB = B.filter((b) => V[b].length >= 5); const cols = F.styles.filter((k) => BB.some((b) => V[b].some((x) => x.style === k))); return grid('Brand', BB, cols, (b, k) => { const n = V[b].filter((x) => x.style === k).length; return { n, v: n / V[b].length, text: n ? p100(n, V[b].length) : '', title: `${n} of ${V[b].length} video creatives` }; }) + `<p class="note">${BB.map((b) => `${esc(b)} ${V[b].length}`).join(' · ')} video creatives. ${B.filter((b) => V[b].length < 5).map(esc).join(' and ')} run${B.filter((b) => V[b].length < 5).length === 1 ? 's' : ''} fewer than 5, so ${B.filter((b) => V[b].length < 5).length === 1 ? 'it is' : 'they are'} left out.</p>`; })()}</div></section>
@@ -315,11 +425,12 @@ function brandView(b) {
       <li>Mostly ${esc(kinds.sort((a, x) => x.v - a.v)[0].l.replace(/^Dynamic/, 'dynamic').replace(/^(Video|Image|Carousel)$/, (m) => m.toLowerCase()))} ads (${per100(kinds[0].v, S.ads)} in 100), sending people to the ${esc(lands.sort((a, x) => x.v - a.v)[0].l)} (${per100(lands[0].v, S.ads)} in 100).</li>
       ${S.spoken ? `<li>${nf(S.spoken)} ads have speech: ${langs.slice(0, 3).map((r) => `${esc(r.l)} ${per100(r.v, S.spoken)} in 100`).join(', ')}.</li>` : '<li>Almost none of its ads have speech: music or text only.</li>'}
       <li>A typical live ad has been running ${typ(S.live_days)} days; ${nf(S.creatives)} distinct creatives across the ${nf(S.ads)} ads.</li></ul></section>
+    ${playbookHTML(b)}
     <div class="two">
       <section class="sec"><h3>What it talks about</h3><p>Ads carrying each message, out of ${nf(S.ads)}. Click one for those ads.</p><div class="card" id="bmsg">${bars(msgs, { fmt: (r) => `${nf(r.v)} · ${p100(r.v, S.ads)}%`, hi: (r) => r === msgs[0], onClick: true })}</div></section>
       <section class="sec"><h3>Formats and links</h3><p>How its ads are built, and where they send people.</p><div class="card">${bars(kinds, { fmt: (r) => nf(r.v), hi: (r) => r === kinds[0] })}<div style="height:14px"></div>${bars(lands, { fmt: (r) => nf(r.v), hi: (r) => r === lands[0] })}</div></section>
     </div>
-    ${openings.length ? `<section class="sec"><h3>How its videos open</h3><p>The first line spoken in its video ads (in English), most used first. Click one to see the ad.</p><div class="quotes">${openings.map((o, i) => `<button class="q" data-op="${i}">“${esc(o.t)}”<small>${o.n} ad${o.n > 1 ? 's' : ''}${o.x.lang && o.x.lang !== 'English' ? ` · spoken in ${esc(o.x.lang)}` : ''}</small></button>`).join('')}</div></section>` : ''}
+
     ${(() => { const V = vids(list); if (!V.length) return ''; const st = F.styles.map((k) => ({ l: k, v: V.filter((x) => x.style === k).length })).filter((r) => r.v).sort((a, x) => x.v - a.v);
       const sp = list.filter((x) => x.style && x.tx); const an = F.angles.map((k) => ({ l: k, v: sp.filter((x) => x.angles.includes(k)).length })).filter((r) => r.v).sort((a, x) => x.v - a.v);
       return `<div class="two"><section class="sec"><h3>What its videos look like</h3><p>${nf(V.length)} distinct video creatives, sorted by what is on screen. Click one for those videos.</p><div class="card" id="bstyle">${bars(st, { fmt: (r) => `${nf(r.v)} · ${p100(r.v, V.length)}%`, hi: (r) => r === st[0], onClick: true })}</div></section>
@@ -342,7 +453,7 @@ function adsView() {
   const S = {}; base.forEach((x) => x.msgs.forEach((m) => (S[m] = (S[m] || 0) + 1)));
   const K = {}; base.forEach((x) => (K[x.kind] = (K[x.kind] || 0) + 1));
   const q = state.q.toLowerCase();
-  const list = base.filter((x) => (!state.msg || x.msgs.includes(state.msg) || x.angles.includes(state.msg)) && (!state.kind || x.kind === state.kind) && (!state.live || x.live) && (!state.style || x.style === state.style) && (!state.creator || x.creator)
+  const list = base.filter((x) => (!state.msg || x.msgs.includes(state.msg) || x.angles.includes(state.msg)) && (!state.kind || x.kind === state.kind) && (!state.live || x.live) && (!state.style || x.style === state.style) && (!state.creator || x.creator) && (!state.lang || x.lang === state.lang)
     && (!q || [x.cap, x.head, x.tx, x.img, x.ocr, x.cards, x.b, x.creator].join(' ').toLowerCase().includes(q)));
   groups = group(list).sort((a, b) => (b.live - a.live) || b.n - a.n || b.days - a.days);
   return `<section class="tools"><label class="search"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--muted)"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg><input id="q" placeholder="Search captions, what's said, text on the image…" value="${esc(state.q)}"></label>
@@ -351,6 +462,7 @@ function adsView() {
     <div class="chips">${KINDS.filter((k) => K[k]).map((k) => `<button class="chip${state.kind === k ? ' on' : ''}" data-kind="${esc(k)}">${esc(k)}<b>${K[k]}</b></button>`).join('')}</div>
     ${(() => { const ST = {}; base.forEach((x) => x.style && (ST[x.style] = (ST[x.style] || 0) + 1)); const cr = base.filter((x) => x.creator).length;
       return `<div class="chips">${F.styles.filter((k) => ST[k]).map((k) => `<button class="chip${state.style === k ? ' on' : ''}" data-style="${esc(k)}">${esc(k)}<b>${ST[k]}</b></button>`).join('')}${cr ? `<button class="chip${state.creator ? ' on' : ''}" id="crOnly">Creator ads<b>${cr}</b></button>` : ''}</div>`; })()}
+    ${state.lang ? `<div class="chips"><button class="chip on" id="langOff">Spoken in ${esc(state.lang)} ✕</button></div>` : ''}
     <p class="note" style="margin:0 0 12px">${nf(groups.length)} creatives from ${nf(list.length)} ads. Identical creatives are shown once with the number of ads using them.</p>
     <section class="gal">${groups.slice(0, state.shown).map(cardHTML).join('')}</section>
     ${groups.length > state.shown ? `<button class="pill more" id="more">Show more (${nf(groups.length - state.shown)} left)</button>` : ''}`;
@@ -389,7 +501,7 @@ function render() {
   document.querySelectorAll('[data-brand]').forEach((el) => (el.onclick = () => { state.brand = el.dataset.brand; Object.assign(state, { msg: null, kind: null, style: null, creator: false, q: '', shown: 48 }); drawDD(); render(); }));
   wire();
 }
-function toAds(f) { Object.assign(state, { mode: 'ads', msg: null, kind: null, live: false, style: null, creator: false, q: '', shown: 48 }, f); render(); scrollTo({ top: 0 }); }
+function toAds(f) { Object.assign(state, { mode: 'ads', msg: null, kind: null, live: false, style: null, creator: false, lang: null, q: '', shown: 48 }, f); render(); scrollTo({ top: 0 }); }
 function wire() {
   // overview: brand bars and grid squares
   document.querySelectorAll('.br.clk[data-i]').forEach((el) => (el.onclick = () => {
@@ -401,16 +513,14 @@ function wire() {
     if (F.styles.includes(r)) { state.brand = state.brand; toAds({ style: r, creator: c === 'Creator ads' }); return; }
     if (F.messages.includes(c) || F.angles.includes(c)) toAds({ msg: c }); else if (KINDS.includes(c)) toAds({ kind: c }); else if (F.styles.includes(c)) toAds({ style: c }); else toAds({ q: '' });
   }));
-  document.querySelectorAll('.q[data-op]').forEach((el) => (el.onclick = () => {
-    const list = adsOf(state.brand); const op = {}; list.forEach((x) => { if (x.opening && x.opening.length > 14) { const k = x.opening.toLowerCase(); (op[k] ||= { t: x.opening, n: 0, x }).n++; } });
-    const o = Object.values(op).sort((a, x) => x.n - a.n)[+el.dataset.op]; if (o) open(o.x);
-  }));
+  document.querySelectorAll('.pb-ev[data-pb]').forEach((el) => (el.onclick = () => { const e = PLAYBOOK[state.brand].points[+el.dataset.pb][2]; toAds({ style: e.style || null, msg: e.msg || null, kind: e.kind || null, lang: e.lang || null, creator: !!e.creator, live: !!e.live, q: e.q || '' }); }));
   // gallery
   const q = $('#q'); if (q) q.oninput = (e) => { state.q = e.target.value; state.shown = 48; const pos = e.target.selectionStart; render(); const n = $('#q'); n.focus(); n.setSelectionRange(pos, pos); };
   const lo = $('#liveOnly'); if (lo) lo.onclick = () => { state.live = !state.live; render(); };
   document.querySelectorAll('[data-msg]').forEach((el) => (el.onclick = () => { state.msg = state.msg === el.dataset.msg ? null : el.dataset.msg; state.shown = 48; render(); }));
   document.querySelectorAll('[data-kind]').forEach((el) => (el.onclick = () => { state.kind = state.kind === el.dataset.kind ? null : el.dataset.kind; state.shown = 48; render(); }));
   document.querySelectorAll('[data-style]').forEach((el) => (el.onclick = () => { state.style = state.style === el.dataset.style ? null : el.dataset.style; state.shown = 48; render(); }));
+  const lo2 = $('#langOff'); if (lo2) lo2.onclick = () => { state.lang = null; render(); };
   const co = $('#crOnly'); if (co) co.onclick = () => { state.creator = !state.creator; state.shown = 48; render(); };
   const more = $('#more'); if (more) more.onclick = () => { state.shown += 48; render(); };
   document.querySelectorAll('.ad[data-k]').forEach((el) => (el.onclick = () => {
